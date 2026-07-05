@@ -1,0 +1,19 @@
+# dependencies
+node_modules/
+
+# builds
+.next/
+dist/
+build/
+.turbo/
+out/
+
+# env
+.env
+.env.local
+.env*.local
+
+# misc
+*.log
+.DS_Store
+coverage/

@@ -1,0 +1,254 @@
+Folder PATH listing for volume New Volume
+Volume serial number is 00000030 2446:9C67
+D:.
+|   .editorconfig
+|   .env.example
+|   .gitignore
+|   .prettierrc
+|   CHANGELOG.md
+|   CONTRIBUTING.md
+|   eslint.config.js
+|   LICENSE
+|   package.json
+|   pnpm-workspace.yaml
+|   README.md
+|   tree.txt
+|   tsconfig.json
+|   turbo.json
+|   
++---.claude
+|   |   settings.local.json
+|   |   
+|   +---agents
+|   +---commands
+|   \---memory
++---.cursor
+|   \---rules
++---.github
+|   |   CODEOWNERS
+|   |   PULL_REQUEST_TEMPLATE.md
+|   |   
+|   +---ISSUE_TEMPLATE
+|   \---workflows
++---assets
+|   +---audio
+|   |   +---ambient
+|   |   +---avatar
+|   |   +---nature
+|   |   +---office
+|   |   +---ui
+|   |   \---voice
+|   +---avatars
+|   |   +---animations
+|   |   +---models
+|   |   +---portraits
+|   |   \---textures
+|   +---backgrounds
+|   |   +---landing
+|   |   +---loader
+|   |   +---office
+|   |   \---transition
+|   +---fonts
+|   +---hdr
+|   +---icons
+|   +---lottie
+|   +---textures
+|   \---videos
++---backend
+|   +---ai
+|   +---api
+|   +---auth
+|   +---database
+|   \---shared
++---docs
+|   |   00-product.md
+|   |   01-architecture.md
+|   |   02-user-journey.md
+|   |   03-design-system.md
+|   |   04-animation-system.md
+|   |   05-ai.md
+|   |   06-avatar.md
+|   |   07-office.md
+|   |   08-api.md
+|   |   09-database.md
+|   |   10-deployment.md
+|   |   11-roadmap.md
+|   |   12-assets.md
+|   |   13-prompts.md
+|   |   CODING_GUIDELINES.md
+|   |   MASTER_PLAN.md
+|   |   ROADMAP.md
+|   |   TECH_STACK.md
+|   |   
+|   \---ADR
+|           ADR-001-architecture.md
+|           ADR-002-state-management.md
+|           ADR-003-animation-engine.md
+|           
++---infrastructure
+|   +---aws
+|   +---docker
+|   +---scripts
+|   \---terraform
++---knowledge
+|       architecture.md
+|       aws.md
+|       blog.md
+|       certifications.md
+|       experience.md
+|       personality.md
+|       projects.md
+|       resume.md
+|       skills.md
+|       
++---public
+|   |   robots.txt
+|   |   
+|   +---favicon
+|   \---images
++---src
+|   +---ai
+|   |   +---functions
+|   |   +---memory
+|   |   +---prompts
+|   |   +---rag
+|   |   +---system
+|   |   +---tools
+|   |   \---voice
+|   +---animations
+|   |   +---avatar
+|   |   +---camera
+|   |   +---door
+|   |   +---loader
+|   |   +---office
+|   |   \---transitions
+|   +---app
+|   |   |   globals.css
+|   |   |   layout.tsx
+|   |   |   loading.tsx
+|   |   |   not-found.tsx
+|   |   |   page.tsx
+|   |   |   
+|   |   \---api
+|   +---components
+|   |   +---forms
+|   |   +---layout
+|   |   +---shared
+|   |   +---typography
+|   |   \---ui
+|   +---config
+|   |       colors.ts
+|   |       constants.ts
+|   |       motion.ts
+|   |       routes.ts
+|   |       sounds.ts
+|   |       theme.ts
+|   |       timings.ts
+|   |       zIndex.ts
+|   |       
+|   +---design-system
+|   |   +---buttons
+|   |   +---cards
+|   |   +---dialogs
+|   |   +---effects
+|   |   +---glass
+|   |   +---icons
+|   |   +---inputs
+|   |   \---loaders
+|   +---engine
+|   |   +---animation
+|   |   +---audio
+|   |   +---avatar
+|   |   +---camera
+|   |   +---events
+|   |   +---lighting
+|   |   +---particles
+|   |   +---physics
+|   |   \---scene
+|   +---features
+|   |   +---admin
+|   |   +---analytics
+|   |   +---avatar
+|   |   +---conversation
+|   |   +---door
+|   |   +---landing
+|   |   +---loader
+|   |   +---office
+|   |   \---portfolio
+|   +---hooks
+|   |       useAudio.ts
+|   |       useAvatar.ts
+|   |       useChat.ts
+|   |       useOffice.ts
+|   |       useScene.ts
+|   |       
+|   +---lib
+|   |   +---api
+|   |   +---helpers
+|   |   +---logger
+|   |   \---validators
+|   +---providers
+|   +---scenes
+|   |   +---ConversationScene
+|   |   |   |   index.tsx
+|   |   |   |   
+|   |   |   +---animations
+|   |   |   +---components
+|   |   |   +---hooks
+|   |   |   \---styles
+|   |   +---LandingScene
+|   |   |   |   index.tsx
+|   |   |   |   
+|   |   |   +---animations
+|   |   |   +---components
+|   |   |   +---hooks
+|   |   |   \---styles
+|   |   +---LoaderScene
+|   |   |   |   index.tsx
+|   |   |   |   
+|   |   |   +---animations
+|   |   |   +---components
+|   |   |   +---hooks
+|   |   |   \---styles
+|   |   +---OfficeScene
+|   |   |   |   index.tsx
+|   |   |   |   
+|   |   |   +---animations
+|   |   |   +---components
+|   |   |   +---hooks
+|   |   |   \---styles
+|   |   +---SceneManager
+|   |   \---TransitionScene
+|   |       |   index.tsx
+|   |       |   
+|   |       +---animations
+|   |       +---components
+|   |       +---hooks
+|   |       \---styles
+|   +---services
+|   |   +---ai
+|   |   +---analytics
+|   |   +---audio
+|   |   +---storage
+|   |   \---types
+|   +---stores
+|   |       app.store.ts
+|   |       avatar.store.ts
+|   |       chat.store.ts
+|   |       office.store.ts
+|   |       settings.store.ts
+|   |       
+|   +---styles
+|   +---types
+|   |       api.ts
+|   |       avatar.ts
+|   |       chat.ts
+|   |       common.ts
+|   |       office.ts
+|   |       scene.ts
+|   |       
+|   \---utils
+\---tests
+    +---e2e
+    +---integration
+    \---unit
