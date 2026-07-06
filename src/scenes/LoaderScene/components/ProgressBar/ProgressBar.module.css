@@ -1,0 +1,14 @@
+.bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  width: min(20rem, 70vw);
+}
+
+.segment {
+  flex: 1 1 0;
+  height: 0.4rem;
+  border-radius: var(--radius-full);
+  background: #a5b4fc;
+}

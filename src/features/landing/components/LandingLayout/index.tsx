@@ -1,11 +1,11 @@
 import type { ReactNode } from "react";
 
-import styles from "./LandingLayout.module.css";
+import { FullscreenLayout } from "@/components/layout/FullscreenLayout/FullscreenLayout";
 
 interface LandingLayoutProps {
   children: ReactNode;
 }
 
 export function LandingLayout({ children }: LandingLayoutProps) {
-  return <main className={styles.root}>{children}</main>;
+  return <FullscreenLayout as="main">{children}</FullscreenLayout>;
 }

@@ -1,0 +1,98 @@
+.root {
+  position: relative;
+  width: 100vw;
+  height: 100dvh;
+  overflow: hidden;
+  background:
+    radial-gradient(120% 80% at 50% 12%, #0c1226 0%, #060a15 55%, #03050c 100%);
+}
+
+/* The "camera" — everything inside is transformed together each frame. */
+.world {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  transform-origin: 50% 62%;
+  will-change: transform;
+}
+
+.exterior {
+  position: relative;
+  width: min(58vw, 40rem);
+  height: min(72vh, 34rem);
+  filter: drop-shadow(0 30px 60px rgba(0, 0, 0, 0.6));
+}
+
+/* Dark building silhouette. */
+.building {
+  position: absolute;
+  inset: 6% 8% 0 8%;
+  border-radius: 10px 10px 0 0;
+  background: linear-gradient(180deg, #0a1122 0%, #070d1c 60%, #050912 100%);
+  border: 1px solid rgba(120, 140, 200, 0.18);
+  overflow: hidden;
+}
+
+/* Tiled lit windows. */
+.windows {
+  position: absolute;
+  inset: 8% 10% 30% 10%;
+  background-image: radial-gradient(rgba(170, 195, 255, 0.55) 32%, rgba(170, 195, 255, 0) 34%);
+  background-size: 16% 22%;
+  background-position: center;
+  opacity: 0.85;
+  mix-blend-mode: screen;
+}
+
+/* Diagonal glass reflection sweep. */
+.glass {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    118deg,
+    rgba(255, 255, 255, 0) 42%,
+    rgba(186, 205, 255, 0.16) 50%,
+    rgba(255, 255, 255, 0) 58%
+  );
+  pointer-events: none;
+}
+
+/* Glowing entrance the camera walks toward. */
+.door {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  width: 24%;
+  height: 44%;
+  transform: translateX(-50%);
+  border-radius: 8px 8px 0 0;
+  background: linear-gradient(180deg, rgba(129, 140, 248, 0.4), rgba(79, 90, 200, 0.12));
+  border: 1px solid rgba(148, 163, 255, 0.55);
+  box-shadow:
+    0 0 46px rgba(129, 140, 248, 0.5),
+    inset 0 0 24px rgba(148, 163, 255, 0.25);
+}
+
+/* Fade layer: black at the start and end of the sequence. */
+.overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background: #03050c;
+  transition-property: opacity;
+  transition-timing-function: ease;
+  pointer-events: none;
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}

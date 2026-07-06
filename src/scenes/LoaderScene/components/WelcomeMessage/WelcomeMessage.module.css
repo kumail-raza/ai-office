@@ -1,0 +1,30 @@
+.welcome {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.15rem;
+  text-align: center;
+}
+
+.greeting {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: #eef2ff;
+}
+
+.sub {
+  margin: 0;
+  font-size: 0.9rem;
+  color: rgba(199, 210, 254, 0.75);
+}
+
+@media (max-width: 640px) {
+  .greeting {
+    font-size: 1rem;
+  }
+
+  .sub {
+    font-size: 0.82rem;
+  }
+}

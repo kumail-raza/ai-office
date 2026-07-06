@@ -1,0 +1,32 @@
+.stage {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-8);
+  height: 100dvh;
+  padding: var(--space-7) var(--space-6);
+  overflow: hidden;
+}
+
+.panelSlot {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@media (max-width: 1024px) {
+  .stage {
+    gap: var(--space-6);
+    padding: var(--space-5) var(--space-5);
+  }
+}
+
+@media (max-width: 640px) {
+  .stage {
+    flex-direction: column;
+    gap: var(--space-3);
+    padding: var(--space-4);
+  }
+}

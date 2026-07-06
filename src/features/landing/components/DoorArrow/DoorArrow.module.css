@@ -1,0 +1,25 @@
+.arrow {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  margin: -1.375rem 0 0 -1.375rem;
+  border-radius: 50%;
+  color: var(--color-accent-contrast);
+  background: var(--color-accent);
+  box-shadow:
+    0 0 0 6px rgba(16, 24, 40, 0.08),
+    0 0 22px 6px rgba(129, 140, 248, 0.65);
+  pointer-events: none;
+}
+
+.glyph {
+  font-size: 1.25rem;
+  line-height: 1;
+  transform: translateX(1px);
+}

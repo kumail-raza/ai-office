@@ -1,5 +1,10 @@
-import { LandingScene } from "@/scenes/LandingScene";
+import { AssetPreloader } from "@/components/ui/AssetPreloader/AssetPreloader";
+import { SceneManager } from "@/scenes/SceneManager";
 
 export default function HomePage() {
-  return <LandingScene />;
+  return (
+    <AssetPreloader>
+      <SceneManager />
+    </AssetPreloader>
+  );
 }

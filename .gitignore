@@ -20,3 +20,6 @@ coverage/
 
 # local scratch
 tree.txt
+
+# local claude settings
+.claude/settings.local.json

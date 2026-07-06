@@ -1,0 +1,12 @@
+.avatar {
+  width: min(30rem, 60vw);
+  height: auto;
+  overflow: visible;
+  filter: drop-shadow(0 24px 40px rgba(30, 41, 59, 0.28));
+}
+
+@media (max-width: 640px) {
+  .avatar {
+    width: min(20rem, 78vw);
+  }
+}

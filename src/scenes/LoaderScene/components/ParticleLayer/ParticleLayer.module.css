@@ -1,0 +1,14 @@
+.layer {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.particle {
+  position: absolute;
+  top: 100%;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(199, 210, 254, 0.9), rgba(199, 210, 254, 0) 70%);
+}
