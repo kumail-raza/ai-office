@@ -1,0 +1,7 @@
+.root {
+  width: min(20rem, 100%);
+  padding: 1.5rem;
+  border: 1px dashed #98a2b3;
+  border-radius: 0.5rem;
+  color: #f8fafc;
+}
