@@ -1,25 +1,36 @@
-import { PromptService } from "./PromptService";
-
-function delay(ms: number): Promise<void> {
-  return new Promise((resolve) => setTimeout(resolve, ms));
-}
-
 /**
- * Streams an assistant reply chunk-by-chunk. The shape — an async generator of
- * string deltas driven by an AbortSignal — mirrors the OpenAI streaming API, so
- * swapping the mock body for a real `chat.completions.create({ stream: true })`
- * call requires no changes to callers.
+ * Client-side transport for the conversation. Streams the assistant reply from
+ * the knowledge-backed API route as an async generator of string deltas — the
+ * same shape as the OpenAI streaming API — so the provider behind the route can
+ * change without touching the UI or the provider store.
  */
 export const ConversationService = {
-  async *stream(prompt: string, signal: AbortSignal): AsyncGenerator<string> {
-    const reply = PromptService.getReply(prompt);
-    const tokens = reply.match(/\s+|\S+/g) ?? [reply];
+  async *stream(message: string, signal: AbortSignal): AsyncGenerator<string> {
+    const response = await fetch("/api/chat", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message }),
+      signal,
+    });
 
-    for (const token of tokens) {
+    if (!response.ok || response.body === null) {
+      throw new Error(`Chat request failed: ${response.status}`);
+    }
+
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+
+    try {
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        yield decoder.decode(value, { stream: true });
+      }
+    } catch (error) {
       if (signal.aborted) return;
-      await delay(18 + Math.random() * 34);
-      if (signal.aborted) return;
-      yield token;
+      throw error;
+    } finally {
+      reader.releaseLock();
     }
   },
 };
