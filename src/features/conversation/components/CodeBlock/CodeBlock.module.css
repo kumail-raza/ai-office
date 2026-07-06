@@ -1,0 +1,39 @@
+.wrapper {
+  position: relative;
+  margin: 0.6rem 0;
+  border-radius: 0.6rem;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.3rem 0.6rem 0.3rem 0.8rem;
+  background: #11151f;
+  color: #8a94a6;
+  font-size: 0.72rem;
+  font-family: ui-monospace, "SFMono-Regular", "Menlo", monospace;
+}
+
+.copy {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.25rem 0.55rem;
+  font-size: 0.72rem;
+  color: #cbd3e1;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 0.4rem;
+  cursor: pointer;
+}
+
+.copy:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.copied {
+  color: #6ee7a8;
+}

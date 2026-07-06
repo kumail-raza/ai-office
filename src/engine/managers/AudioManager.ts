@@ -25,6 +25,10 @@ class AudioManager {
     this.play("ambient-stop");
   }
 
+  speak(_text: string): void {
+    this.play("speak");
+  }
+
   private play(cue: string): void {
     if (process.env.NODE_ENV !== "production") {
       // eslint-disable-next-line no-console

@@ -3,6 +3,7 @@
 import gsap from "gsap";
 import { useCallback, useEffect, useRef, useState } from "react";
 
+import { ConversationPanel, ConversationProvider } from "@/features/conversation";
 import { useAppStore } from "@/stores/app.store";
 
 import {
@@ -10,7 +11,6 @@ import {
   type AvatarHandle,
   CameraRig,
   GreetingController,
-  InteractionPanel,
   Workspace,
 } from "./components";
 import { WORKSPACE_TIMING, WorkspacePhase } from "./workspace.constants";
@@ -67,9 +67,6 @@ export function OfficeScene() {
     setPhase(WorkspacePhase.INTERACTIVE);
   }, []);
 
-  const greetingActive =
-    phase === WorkspacePhase.GREETING || phase === WorkspacePhase.INTERACTIVE;
-
   return (
     <div className={styles.root}>
       <CameraRig reducedMotion={reducedMotion}>
@@ -80,12 +77,16 @@ export function OfficeScene() {
 
       <GreetingController
         name={visitorName}
-        active={greetingActive}
+        active={phase === WorkspacePhase.GREETING}
         reducedMotion={reducedMotion}
         onComplete={handleGreetingComplete}
       />
 
-      <InteractionPanel visible={phase === WorkspacePhase.INTERACTIVE} />
+      {phase === WorkspacePhase.INTERACTIVE ? (
+        <ConversationProvider>
+          <ConversationPanel />
+        </ConversationProvider>
+      ) : null}
 
       <div ref={fadeOverlayRef} className={styles.fadeOverlay} aria-hidden="true" />
     </div>

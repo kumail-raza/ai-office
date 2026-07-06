@@ -1,0 +1,55 @@
+.row {
+  display: flex;
+  flex-direction: column;
+  max-width: 88%;
+}
+
+.assistant {
+  align-self: flex-start;
+  align-items: flex-start;
+}
+
+.user {
+  align-self: flex-end;
+  align-items: flex-end;
+}
+
+.bubble {
+  padding: 0.7rem 0.9rem;
+  border-radius: 1rem;
+  font-size: 0.92rem;
+  line-height: 1.5;
+}
+
+.assistant .bubble {
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(120, 90, 50, 0.14);
+  border-bottom-left-radius: 0.35rem;
+  color: #2a2420;
+}
+
+.user .bubble {
+  background: linear-gradient(180deg, #4f6b8c, #3f5c7d);
+  border-bottom-right-radius: 0.35rem;
+  color: #f8fafc;
+}
+
+.error .bubble {
+  background: rgba(220, 78, 78, 0.12);
+  border: 1px solid rgba(220, 78, 78, 0.35);
+  color: #a02525;
+}
+
+.caret {
+  display: inline-block;
+  width: 0.5ch;
+  margin-left: 1px;
+  color: #6b7280;
+}
+
+.meta {
+  margin-top: 0.2rem;
+  padding: 0 0.35rem;
+  font-size: 0.68rem;
+  color: #9a8a78;
+}
