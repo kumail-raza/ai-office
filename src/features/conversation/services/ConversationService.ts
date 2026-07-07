@@ -1,3 +1,5 @@
+import type { ProjectContext } from "../types";
+
 export interface ConversationTurn {
   role: "user" | "assistant";
   content: string;
@@ -14,11 +16,12 @@ export const ConversationService = {
     message: string,
     history: ConversationTurn[],
     signal: AbortSignal,
+    project?: ProjectContext | null,
   ): AsyncGenerator<string> {
     const response = await fetch("/api/chat", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ message, history }),
+      body: JSON.stringify({ message, history, project: project ?? null }),
       signal,
     });
 

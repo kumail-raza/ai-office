@@ -6,7 +6,7 @@ import { audioManager } from "@/engine/managers/AudioManager";
 
 import { ConversationService, type ConversationTurn } from "../services/ConversationService";
 import { MessageService } from "../services/MessageService";
-import { ConversationStatus, type Message, MessageRole, MessageStatus } from "../types";
+import { ConversationStatus, type Message, MessageRole, MessageStatus, type ProjectContext } from "../types";
 import { ConversationContext, type ConversationContextValue } from "./ConversationContext";
 
 interface ConversationProviderProps {
@@ -18,12 +18,15 @@ export function ConversationProvider({ children, initialMessages = [] }: Convers
   const [messages, setMessages] = useState<Message[]>(initialMessages);
   const [status, setStatus] = useState<ConversationStatus>(ConversationStatus.Idle);
   const [voiceEnabled, setVoiceEnabled] = useState(false);
+  const [projectContext, setProjectContext] = useState<ProjectContext | null>(null);
 
   const abortRef = useRef<AbortController | null>(null);
   const busyRef = useRef(false);
   const voiceRef = useRef(voiceEnabled);
   const messagesRef = useRef(messages);
   messagesRef.current = messages;
+  const projectContextRef = useRef(projectContext);
+  projectContextRef.current = projectContext;
 
   const buildHistory = useCallback(
     (): ConversationTurn[] =>
@@ -69,7 +72,12 @@ export function ConversationProvider({ children, initialMessages = [] }: Convers
         patch(reply.id, { status: MessageStatus.Typing });
 
         let content = "";
-        for await (const chunk of ConversationService.stream(trimmed, history, controller.signal)) {
+        for await (const chunk of ConversationService.stream(
+          trimmed,
+          history,
+          controller.signal,
+          projectContextRef.current,
+        )) {
           content += chunk;
           patch(reply.id, { content });
         }
@@ -115,9 +123,11 @@ export function ConversationProvider({ children, initialMessages = [] }: Convers
     status,
     voiceEnabled,
     isBusy: status !== ConversationStatus.Idle,
+    projectContext,
     sendMessage,
     stopGeneration,
     toggleVoice,
+    setProjectContext,
   };
 
   return <ConversationContext.Provider value={value}>{children}</ConversationContext.Provider>;

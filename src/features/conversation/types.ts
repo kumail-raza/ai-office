@@ -30,3 +30,14 @@ export interface QuickAction {
   label: string;
   prompt: string;
 }
+
+/**
+ * Lightweight context describing the project a visitor is currently viewing.
+ * When set, it's sent alongside each message so the assistant can answer
+ * questions grounded in that specific project.
+ */
+export interface ProjectContext {
+  slug: string;
+  title: string;
+  summary: string;
+}

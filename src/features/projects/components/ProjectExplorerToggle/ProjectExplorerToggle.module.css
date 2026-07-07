@@ -1,0 +1,42 @@
+.toggle {
+  position: fixed;
+  top: 4.3rem;
+  left: 1.1rem;
+  z-index: 9;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.55rem 0.95rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #2a2420;
+  background: rgba(255, 255, 255, 0.88);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  border-radius: 999px;
+  box-shadow: 0 10px 26px rgba(30, 41, 59, 0.22);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  cursor: pointer;
+}
+
+.toggle:hover {
+  background: rgba(255, 255, 255, 0.98);
+}
+
+.active {
+  color: #ffffff;
+  background: linear-gradient(180deg, #4f6b8c, #3f5c7d);
+}
+
+.active:hover {
+  background: linear-gradient(180deg, #43617f, #365170);
+}
+
+@media (max-width: 640px) {
+  .toggle {
+    top: 3.1rem;
+    left: 0.6rem;
+    padding: 0.45rem 0.75rem;
+    font-size: 0.78rem;
+  }
+}

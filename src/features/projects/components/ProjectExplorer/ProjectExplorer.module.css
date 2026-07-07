@@ -1,0 +1,138 @@
+.controls {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  margin-bottom: 0.9rem;
+}
+
+.searchRow {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.search {
+  flex: 1;
+  padding: 0.55rem 0.8rem;
+  font-size: 0.88rem;
+  color: var(--color-text-primary);
+  background: var(--color-surface-strong);
+  border: 1px solid var(--color-border-soft);
+  border-radius: var(--radius-md);
+}
+
+.sort {
+  padding: 0.55rem 0.7rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  background: var(--color-surface-strong);
+  border: 1px solid var(--color-border-soft);
+  border-radius: var(--radius-md);
+}
+
+.filterRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.chip {
+  padding: 0.3rem 0.7rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #45392e;
+  background: rgba(120, 90, 50, 0.08);
+  border: 1px solid transparent;
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.chipActive {
+  color: #ffffff;
+  background: linear-gradient(180deg, #4f6b8c, #3f5c7d);
+}
+
+.status {
+  margin: 0.4rem 0;
+  font-size: 0.86rem;
+  color: var(--color-text-subtle);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.7rem;
+}
+
+@media (max-width: 640px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  padding: 0.85rem 0.95rem;
+  text-align: left;
+  border-radius: 0.85rem;
+  border: 1px solid rgba(120, 90, 50, 0.16);
+  background: rgba(255, 255, 255, 0.7);
+  cursor: pointer;
+  transition:
+    transform 0.16s ease,
+    box-shadow 0.16s ease;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(120, 90, 50, 0.16);
+}
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.cardTitle {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.statusBadge {
+  padding: 0.1rem 0.5rem;
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  border-radius: 999px;
+  background: rgba(79, 107, 140, 0.14);
+  color: #3f5c7d;
+  white-space: nowrap;
+}
+
+.cardSummary {
+  margin: 0;
+  font-size: 0.82rem;
+  color: #4a4038;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  margin-top: 0.4rem;
+}
+
+.tag {
+  padding: 0.1rem 0.45rem;
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: #45392e;
+  background: rgba(120, 90, 50, 0.1);
+  border-radius: 999px;
+}

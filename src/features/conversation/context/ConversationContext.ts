@@ -2,16 +2,18 @@
 
 import { createContext, useContext } from "react";
 
-import type { ConversationStatus, Message } from "../types";
+import type { ConversationStatus, Message, ProjectContext } from "../types";
 
 export interface ConversationContextValue {
   messages: Message[];
   status: ConversationStatus;
   voiceEnabled: boolean;
   isBusy: boolean;
+  projectContext: ProjectContext | null;
   sendMessage: (text: string) => void;
   stopGeneration: () => void;
   toggleVoice: () => void;
+  setProjectContext: (context: ProjectContext | null) => void;
 }
 
 export const ConversationContext = createContext<ConversationContextValue | null>(null);
