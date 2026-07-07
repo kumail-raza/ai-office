@@ -5,6 +5,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 
 import { ConversationPanel, ConversationProvider } from "@/features/conversation";
 import { OfficeExperience, OfficeInteractionProvider, OfficeObjectLayer } from "@/features/office";
+import { RecruiterDashboard, RecruiterModeToggle } from "@/features/recruiter";
 import { useAppStore } from "@/stores/app.store";
 
 import {
@@ -92,6 +93,8 @@ export function OfficeScene() {
 
           <ConversationProvider>
             <ConversationPanel />
+            <RecruiterModeToggle />
+            <RecruiterDashboard />
           </ConversationProvider>
         </>
       ) : null}
