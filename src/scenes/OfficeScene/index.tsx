@@ -4,6 +4,7 @@ import gsap from "gsap";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import { ConversationPanel, ConversationProvider } from "@/features/conversation";
+import { OfficeInteractionProvider, OfficeObjectLayer, OfficeObjectPanel } from "@/features/office";
 import { useAppStore } from "@/stores/app.store";
 
 import {
@@ -83,9 +84,16 @@ export function OfficeScene() {
       />
 
       {phase === WorkspacePhase.INTERACTIVE ? (
-        <ConversationProvider>
-          <ConversationPanel />
-        </ConversationProvider>
+        <>
+          <OfficeInteractionProvider>
+            <OfficeObjectLayer />
+            <OfficeObjectPanel />
+          </OfficeInteractionProvider>
+
+          <ConversationProvider>
+            <ConversationPanel />
+          </ConversationProvider>
+        </>
       ) : null}
 
       <div ref={fadeOverlayRef} className={styles.fadeOverlay} aria-hidden="true" />

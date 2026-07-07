@@ -1,0 +1,93 @@
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 7;
+  background: rgba(10, 15, 25, 0.18);
+}
+
+.panel {
+  position: fixed;
+  left: 32%;
+  top: 46%;
+  z-index: 8;
+  transform: translate(-50%, -50%);
+  width: min(22rem, 90vw);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 1.4rem 1.5rem 1.5rem;
+  border-radius: 1.25rem;
+  background: rgba(252, 247, 240, 0.92);
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  box-shadow: 0 26px 60px rgba(30, 41, 59, 0.32);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  color: #2a2420;
+}
+
+.panel:focus {
+  outline: none;
+}
+
+.close {
+  position: absolute;
+  top: 0.7rem;
+  right: 0.8rem;
+  width: 1.9rem;
+  height: 1.9rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+  color: #6b5c4c;
+  background: rgba(120, 90, 50, 0.08);
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.close:hover {
+  background: rgba(120, 90, 50, 0.16);
+}
+
+.icon {
+  font-size: 1.7rem;
+  line-height: 1;
+}
+
+.title {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+
+.description {
+  margin: 0;
+  font-size: 0.92rem;
+  line-height: 1.5;
+  color: #4a4038;
+}
+
+.action {
+  align-self: flex-start;
+  margin-top: 0.5rem;
+  padding: 0.55rem 1rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #ffffff;
+  background: linear-gradient(180deg, #4f6b8c, #3f5c7d);
+  border: none;
+  border-radius: 0.7rem;
+  cursor: pointer;
+}
+
+.action:hover {
+  background: linear-gradient(180deg, #43617f, #365170);
+}
+
+@media (max-width: 900px) {
+  .panel {
+    left: 50%;
+    top: 30%;
+  }
+}
