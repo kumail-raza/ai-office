@@ -2,7 +2,8 @@
 
 import { useCallback, useRef, useState, type ReactNode } from "react";
 
-import { audioManager } from "@/engine/managers/AudioManager";
+import { avatarEvents } from "@/engine/events";
+import { PresenceState, presenceManager, voiceAnalytics, voiceManager } from "@/features/voice";
 
 import { ConversationService, type ConversationTurn } from "../services/ConversationService";
 import { MessageService } from "../services/MessageService";
@@ -63,12 +64,16 @@ export function ConversationProvider({ children, initialMessages = [] }: Convers
       const reply = MessageService.createThinking();
       setMessages((prev) => [...prev, user, reply]);
       setStatus(ConversationStatus.Thinking);
+      presenceManager.setState(PresenceState.Thinking);
+      avatarEvents.emit("thinking-start");
 
       try {
         await new Promise((resolve) => setTimeout(resolve, 550));
         if (controller.signal.aborted) return;
 
         setStatus(ConversationStatus.Streaming);
+        avatarEvents.emit("thinking-end");
+        presenceManager.setState(PresenceState.Processing);
         patch(reply.id, { status: MessageStatus.Typing });
 
         let content = "";
@@ -83,16 +88,22 @@ export function ConversationProvider({ children, initialMessages = [] }: Convers
         }
 
         patch(reply.id, { status: MessageStatus.Complete });
-        if (voiceRef.current) audioManager.speak(content);
+        if (voiceRef.current && !controller.signal.aborted) voiceManager.speak(content);
       } catch {
         patch(reply.id, {
           status: MessageStatus.Error,
           content: "Sorry — something went wrong. Please try again.",
         });
+        presenceManager.setState(PresenceState.Error);
       } finally {
         busyRef.current = false;
         abortRef.current = null;
         setStatus(ConversationStatus.Idle);
+        // The voice manager owns presence while speaking; otherwise settle to
+        // idle unless an error state should remain visible to consumers.
+        if (!voiceManager.isSpeaking() && presenceManager.getState() !== PresenceState.Error) {
+          presenceManager.setState(PresenceState.Idle);
+        }
       }
     },
     [patch, buildHistory],
@@ -109,13 +120,21 @@ export function ConversationProvider({ children, initialMessages = [] }: Convers
     );
     busyRef.current = false;
     setStatus(ConversationStatus.Idle);
+    avatarEvents.emit("thinking-end");
+    if (!voiceManager.isSpeaking()) presenceManager.setState(PresenceState.Idle);
   }, []);
 
   const toggleVoice = useCallback(() => {
-    setVoiceEnabled((previous) => {
-      voiceRef.current = !previous;
-      return !previous;
-    });
+    const next = !voiceRef.current;
+    voiceRef.current = next;
+    setVoiceEnabled(next);
+    if (next) {
+      voiceAnalytics.trackVoiceEnabled();
+    } else {
+      voiceAnalytics.trackVoiceDisabled();
+      // Turning voice off also silences anything speaking or queued.
+      voiceManager.stop();
+    }
   }, []);
 
   const value: ConversationContextValue = {

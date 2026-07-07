@@ -23,3 +23,6 @@ tree.txt
 
 # local claude settings
 .claude/settings.local.json
+
+# typescript incremental build info
+tsconfig.tsbuildinfo

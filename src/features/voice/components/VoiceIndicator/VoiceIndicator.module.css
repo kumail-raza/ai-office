@@ -1,0 +1,65 @@
+.indicator {
+  position: fixed;
+  top: 7.6rem;
+  left: 1.1rem;
+  z-index: 9;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.45rem 0.8rem;
+  font-size: 0.78rem;
+  background: rgba(255, 255, 255, 0.88);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  border-radius: 999px;
+  box-shadow: 0 10px 26px rgba(30, 41, 59, 0.22);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+.dot {
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: 50%;
+  background: #98a2b3;
+}
+
+.listening .dot {
+  background: #2f6b4f;
+}
+
+.thinking .dot {
+  background: #b7791f;
+}
+
+.speaking .dot {
+  background: #3f5c7d;
+}
+
+.bars {
+  display: inline-flex;
+  align-items: flex-end;
+  gap: 2px;
+  height: 0.7rem;
+}
+
+.bar {
+  width: 3px;
+  height: 100%;
+  border-radius: 999px;
+  background: #3f5c7d;
+  transform-origin: bottom;
+}
+
+.label {
+  color: #4a4038;
+  font-weight: 600;
+}
+
+@media (max-width: 640px) {
+  .indicator {
+    top: 5.6rem;
+    left: 0.6rem;
+    padding: 0.35rem 0.65rem;
+    font-size: 0.72rem;
+  }
+}

@@ -7,6 +7,7 @@ import { ConversationPanel, ConversationProvider } from "@/features/conversation
 import { OfficeExperience, OfficeInteractionProvider, OfficeObjectLayer } from "@/features/office";
 import { ProjectExperienceLauncher } from "@/features/projects";
 import { RecruiterDashboard, RecruiterModeToggle } from "@/features/recruiter";
+import { VoiceIndicator } from "@/features/voice";
 import { useAppStore } from "@/stores/app.store";
 
 import {
@@ -97,6 +98,7 @@ export function OfficeScene() {
             <RecruiterModeToggle />
             <RecruiterDashboard />
             <ProjectExperienceLauncher />
+            <VoiceIndicator />
           </ConversationProvider>
         </>
       ) : null}
