@@ -1,6 +1,5 @@
-import type { AssembledPrompt } from "@/features/knowledge/types";
-
-import type { LanguageModel } from "./LanguageModel";
+import type { LLMProvider } from "@/knowledge/contracts";
+import type { AssembledPrompt } from "@/knowledge/types";
 
 const FALLBACK =
   "I don't have that in my notes yet — but I'd be glad to connect you with the real Kumail. You can ask me about my projects, cloud & AWS work, AI solutions, or how to hire me.";
@@ -12,7 +11,7 @@ function delay(ms: number): Promise<void> {
 function buildAnswer(prompt: AssembledPrompt): string {
   if (prompt.citations.length === 0) return FALLBACK;
 
-  const sections = prompt.context
+  const sections = prompt.knowledge
     .split("\n\n---\n\n")
     .map((section) =>
       section
@@ -26,11 +25,11 @@ function buildAnswer(prompt: AssembledPrompt): string {
 }
 
 /**
- * Placeholder model for development. It grounds its output in the retrieved
- * context (no invented facts) and streams token-by-token, matching the real
- * streaming contract so it can be swapped for a provider adapter unchanged.
+ * Development stand-in that satisfies the LLMProvider contract. It grounds its
+ * output in the assembled knowledge (no invented facts) and streams token by
+ * token, so a real provider adapter can replace it unchanged.
  */
-export const MockLanguageModel: LanguageModel = {
+export const MockLanguageModel: LLMProvider = {
   name: "mock",
 
   async *stream(prompt, signal) {

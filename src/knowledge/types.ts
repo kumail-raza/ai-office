@@ -1,19 +1,26 @@
+export interface KnowledgeMetadata {
+  title: string;
+  category: string;
+  tags: string[];
+  headings: string[];
+  summary?: string;
+}
+
 export interface KnowledgeDocument {
   id: string;
   path: string;
-  title: string;
-  category: string;
+  metadata: KnowledgeMetadata;
   content: string;
   tokens: string[];
 }
 
-export interface KnowledgeIndex {
+export interface KnowledgeIndexData {
   documents: KnowledgeDocument[];
   idf: Record<string, number>;
   averageLength: number;
 }
 
-export interface SearchResult {
+export interface RetrievedDocument {
   document: KnowledgeDocument;
   score: number;
   snippet: string;
@@ -26,9 +33,15 @@ export interface Citation {
   category: string;
 }
 
+export interface ConversationTurn {
+  role: "user" | "assistant";
+  content: string;
+}
+
 export interface AssembledPrompt {
   system: string;
-  context: string;
+  knowledge: string;
+  history: ConversationTurn[];
   user: string;
   citations: Citation[];
 }

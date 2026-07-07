@@ -4,9 +4,9 @@ import { useCallback, useRef, useState, type ReactNode } from "react";
 
 import { audioManager } from "@/engine/managers/AudioManager";
 
-import { ConversationService } from "../services/ConversationService";
+import { ConversationService, type ConversationTurn } from "../services/ConversationService";
 import { MessageService } from "../services/MessageService";
-import { ConversationStatus, type Message, MessageStatus } from "../types";
+import { ConversationStatus, type Message, MessageRole, MessageStatus } from "../types";
 import { ConversationContext, type ConversationContextValue } from "./ConversationContext";
 
 interface ConversationProviderProps {
@@ -22,6 +22,23 @@ export function ConversationProvider({ children, initialMessages = [] }: Convers
   const abortRef = useRef<AbortController | null>(null);
   const busyRef = useRef(false);
   const voiceRef = useRef(voiceEnabled);
+  const messagesRef = useRef(messages);
+  messagesRef.current = messages;
+
+  const buildHistory = useCallback(
+    (): ConversationTurn[] =>
+      messagesRef.current
+        .filter(
+          (message) =>
+            message.status === MessageStatus.Complete &&
+            (message.role === MessageRole.User || message.role === MessageRole.Assistant),
+        )
+        .map((message) => ({
+          role: message.role === MessageRole.User ? "user" : "assistant",
+          content: message.content,
+        })),
+    [],
+  );
 
   const patch = useCallback((messageId: string, changes: Partial<Message>) => {
     setMessages((prev) =>
@@ -37,6 +54,7 @@ export function ConversationProvider({ children, initialMessages = [] }: Convers
       busyRef.current = true;
       const controller = new AbortController();
       abortRef.current = controller;
+      const history = buildHistory();
 
       const user = MessageService.createUser(trimmed);
       const reply = MessageService.createThinking();
@@ -51,7 +69,7 @@ export function ConversationProvider({ children, initialMessages = [] }: Convers
         patch(reply.id, { status: MessageStatus.Typing });
 
         let content = "";
-        for await (const chunk of ConversationService.stream(trimmed, controller.signal)) {
+        for await (const chunk of ConversationService.stream(trimmed, history, controller.signal)) {
           content += chunk;
           patch(reply.id, { content });
         }
@@ -69,7 +87,7 @@ export function ConversationProvider({ children, initialMessages = [] }: Convers
         setStatus(ConversationStatus.Idle);
       }
     },
-    [patch],
+    [patch, buildHistory],
   );
 
   const stopGeneration = useCallback(() => {

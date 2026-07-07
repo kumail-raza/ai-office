@@ -1,13 +1,14 @@
-import { MockLanguageModel } from "./MockLanguageModel";
-import type { LanguageModel } from "./LanguageModel";
+import type { LLMProvider } from "@/knowledge/contracts";
 
-export type { LanguageModel } from "./LanguageModel";
+import { MockLanguageModel } from "./MockLanguageModel";
+
 export { MockLanguageModel } from "./MockLanguageModel";
 
 /**
  * Single place to select the active model. Swap the return value for an
- * OpenAI / Claude / Gemini / local adapter when ready — callers are unaffected.
+ * OpenAI / Claude / Gemini / local adapter (implementing LLMProvider) when
+ * ready — callers are unaffected.
  */
-export function getLanguageModel(): LanguageModel {
+export function getLanguageModel(): LLMProvider {
   return MockLanguageModel;
 }

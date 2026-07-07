@@ -1,5 +1,5 @@
-import { KnowledgeService } from "./KnowledgeService";
-import type { KnowledgeDocument, KnowledgeIndex, SearchResult } from "../types";
+import { tokenize } from "./text";
+import type { KnowledgeDocument, KnowledgeIndexData, RetrievedDocument } from "./types";
 
 const BM25_K1 = 1.5;
 const BM25_B = 0.75;
@@ -14,7 +14,7 @@ function termFrequency(tokens: string[]): Map<string, number> {
 function scoreDocument(
   document: KnowledgeDocument,
   queryTerms: string[],
-  index: KnowledgeIndex,
+  index: KnowledgeIndexData,
 ): number {
   const frequencies = termFrequency(document.tokens);
   const length = document.tokens.length || 1;
@@ -32,26 +32,25 @@ function scoreDocument(
 
 function buildSnippet(content: string, queryTerms: string[]): string {
   const lower = content.toLowerCase();
-  const bodyStart = content.indexOf("\n") + 1;
   const firstHit = queryTerms
-    .map((term) => lower.indexOf(term, bodyStart))
+    .map((term) => lower.indexOf(term))
     .filter((position) => position >= 0)
     .sort((a, b) => a - b)[0];
 
-  const start = firstHit === undefined ? bodyStart : Math.max(bodyStart, firstHit - 40);
+  const start = firstHit === undefined ? 0 : Math.max(0, firstHit - 40);
   const snippet = content.slice(start, start + SNIPPET_LENGTH).replace(/\s+/g, " ").trim();
-  return start > bodyStart ? `…${snippet}…` : `${snippet}…`;
+  return start > 0 ? `…${snippet}…` : `${snippet}…`;
 }
 
 /**
- * Retrieves the most relevant documents for a query. The default scorer is
- * lexical BM25 (no external services). The `embeddings` seam is where a vector
- * search backend plugs in later — the return shape stays identical, so callers
- * are unaffected.
+ * Accepts a user question and returns the top matching documents. Lexical BM25,
+ * fully provider-independent — no embedding, vector store, or model dependency.
+ * A future semantic path would implement the EmbeddingProvider / VectorStore
+ * contracts and return the same shape.
  */
-export const SearchService = {
-  search(index: KnowledgeIndex, query: string, topK = 3): SearchResult[] {
-    const queryTerms = KnowledgeService.tokenize(query);
+export const KnowledgeRetriever = {
+  retrieve(index: KnowledgeIndexData, question: string, topK = 3): RetrievedDocument[] {
+    const queryTerms = tokenize(question);
     if (queryTerms.length === 0) return [];
 
     return index.documents

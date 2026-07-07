@@ -1,10 +1,7 @@
 import { NextResponse } from "next/server";
 
-import {
-  KnowledgeService,
-  PromptAssembler,
-  SearchService,
-} from "@/features/knowledge";
+import { KnowledgeProvider, PromptAssembler } from "@/knowledge";
+import type { ConversationTurn } from "@/knowledge/types";
 import { getLanguageModel } from "@/services/ai";
 
 export const runtime = "nodejs";
@@ -12,6 +9,20 @@ export const dynamic = "force-dynamic";
 
 interface ChatRequest {
   message?: unknown;
+  history?: unknown;
+}
+
+function parseHistory(value: unknown): ConversationTurn[] {
+  if (!Array.isArray(value)) return [];
+  return value
+    .filter(
+      (turn): turn is ConversationTurn =>
+        typeof turn === "object" &&
+        turn !== null &&
+        (turn as ConversationTurn).role !== undefined &&
+        typeof (turn as ConversationTurn).content === "string",
+    )
+    .slice(-10);
 }
 
 export async function POST(request: Request): Promise<Response> {
@@ -27,9 +38,12 @@ export async function POST(request: Request): Promise<Response> {
     return NextResponse.json({ error: "A message is required." }, { status: 400 });
   }
 
-  const index = await KnowledgeService.getIndex();
-  const results = SearchService.search(index, message, 3);
-  const prompt = PromptAssembler.assemble(message, results);
+  const documents = await KnowledgeProvider.retrieve(message, 3);
+  const prompt = PromptAssembler.assemble({
+    documents,
+    history: parseHistory(body.history),
+    userMessage: message,
+  });
   const model = getLanguageModel();
 
   const encoder = new TextEncoder();
@@ -49,7 +63,6 @@ export async function POST(request: Request): Promise<Response> {
     headers: {
       "Content-Type": "text/plain; charset=utf-8",
       "Cache-Control": "no-store",
-      // Citations are returned internally (not rendered by default).
       "X-Citations": encodeURIComponent(JSON.stringify(prompt.citations)),
     },
   });
