@@ -4,7 +4,7 @@ import gsap from "gsap";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import { ConversationPanel, ConversationProvider } from "@/features/conversation";
-import { OfficeInteractionProvider, OfficeObjectLayer, OfficeObjectPanel } from "@/features/office";
+import { OfficeExperience, OfficeInteractionProvider, OfficeObjectLayer } from "@/features/office";
 import { useAppStore } from "@/stores/app.store";
 
 import {
@@ -87,7 +87,7 @@ export function OfficeScene() {
         <>
           <OfficeInteractionProvider>
             <OfficeObjectLayer />
-            <OfficeObjectPanel />
+            <OfficeExperience />
           </OfficeInteractionProvider>
 
           <ConversationProvider>

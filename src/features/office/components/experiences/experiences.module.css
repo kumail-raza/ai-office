@@ -1,0 +1,149 @@
+.status {
+  margin: 0.4rem 0;
+  font-size: 0.88rem;
+  color: #6b5c4c;
+}
+
+.cardGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.card {
+  text-align: left;
+  padding: 0.75rem 0.9rem;
+  border-radius: 0.8rem;
+  border: 1px solid rgba(120, 90, 50, 0.16);
+  background: rgba(255, 255, 255, 0.7);
+  cursor: pointer;
+  transition:
+    transform 0.16s ease,
+    box-shadow 0.16s ease;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(120, 90, 50, 0.16);
+}
+
+.cardTitle {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+
+.cardDesc {
+  margin: 0.2rem 0 0;
+  font-size: 0.82rem;
+  color: #4a4038;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-top: 0.5rem;
+}
+
+.tag {
+  padding: 0.15rem 0.5rem;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #45392e;
+  background: rgba(120, 90, 50, 0.1);
+  border-radius: 999px;
+}
+
+.meta {
+  font-size: 0.75rem;
+  color: #8a7a68;
+}
+
+.back {
+  margin-bottom: 0.6rem;
+  padding: 0.3rem 0.6rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #45392e;
+  background: rgba(120, 90, 50, 0.1);
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.detailText {
+  margin: 0.4rem 0 0;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: #3a332c;
+}
+
+.list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.coffee {
+  text-align: center;
+  padding: 0.6rem 0;
+}
+
+.coffeeMessage {
+  margin: 0.4rem 0 1rem;
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+
+.primary {
+  padding: 0.55rem 1rem;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: #ffffff;
+  background: linear-gradient(180deg, #4f6b8c, #3f5c7d);
+  border: none;
+  border-radius: 0.7rem;
+  cursor: pointer;
+}
+
+.primary:hover {
+  background: linear-gradient(180deg, #43617f, #365170);
+}
+
+.modeGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.5rem;
+}
+
+.mode {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.15rem;
+  padding: 0.7rem 0.8rem;
+  text-align: left;
+  border-radius: 0.8rem;
+  border: 1px solid rgba(120, 90, 50, 0.16);
+  background: rgba(255, 255, 255, 0.7);
+  cursor: pointer;
+}
+
+.modeActive {
+  border-color: #4f6b8c;
+  box-shadow: 0 0 0 2px rgba(79, 107, 140, 0.35);
+}
+
+.modeLabel {
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.modeHint {
+  font-size: 0.74rem;
+  color: #6b5c4c;
+}

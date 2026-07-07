@@ -40,3 +40,47 @@ export interface OfficeObject {
   icon: string;
   action: OfficeObjectAction;
 }
+
+/* ---- Experience content (markdown-backed, served via OfficeContentService) ---- */
+
+export interface OfficeProject {
+  id: string;
+  title: string;
+  description: string;
+  tags: string[];
+  detail: string;
+}
+
+export interface OfficeCertification {
+  id: string;
+  title: string;
+  issuer: string;
+  year: string;
+  summary: string;
+}
+
+export interface OfficeResource {
+  title: string;
+  description: string;
+}
+
+export interface OfficeResourceCategory {
+  id: string;
+  title: string;
+  resources: OfficeResource[];
+}
+
+export interface OfficeContent {
+  projects: OfficeProject[];
+  certifications: OfficeCertification[];
+  resources: OfficeResourceCategory[];
+}
+
+/* ---- Window environment ---- */
+
+export enum WindowMode {
+  Morning = "morning",
+  Night = "night",
+  Rain = "rain",
+  Cyberpunk = "cyberpunk",
+}

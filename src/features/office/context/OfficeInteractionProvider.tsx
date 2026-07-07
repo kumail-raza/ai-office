@@ -1,7 +1,9 @@
 "use client";
 
-import { useCallback, useMemo, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useMemo, useState, type ReactNode } from "react";
 
+import { OfficeObjectRegistry } from "../services/OfficeObjectRegistry";
+import { officeExperienceManager } from "../services/OfficeExperienceManager";
 import type { OfficeObject } from "../types";
 import {
   OfficeInteractionContext,
@@ -25,9 +27,19 @@ export function OfficeInteractionProvider({
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const [selectedObject, setSelectedObject] = useState<OfficeObject | null>(null);
 
+  useEffect(() => {
+    OfficeObjectRegistry.getAll().forEach((object) => officeExperienceManager.registerObject(object));
+  }, []);
+
   const setHovered = useCallback((id: string | null) => setHoveredId(id), []);
-  const selectObject = useCallback((object: OfficeObject) => setSelectedObject(object), []);
-  const closePanel = useCallback(() => setSelectedObject(null), []);
+  const selectObject = useCallback((object: OfficeObject) => {
+    officeExperienceManager.openExperience(object);
+    setSelectedObject(object);
+  }, []);
+  const closePanel = useCallback(() => {
+    officeExperienceManager.closeExperience();
+    setSelectedObject(null);
+  }, []);
 
   const runAction = useCallback(
     (object: OfficeObject) => {
