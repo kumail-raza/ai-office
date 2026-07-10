@@ -4,6 +4,7 @@ import gsap from "gsap";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import { ConversationPanel, ConversationProvider } from "@/features/conversation";
+import { DigitalTwinRuntime } from "@/features/digital-twin";
 import { OfficeExperience, OfficeInteractionProvider, OfficeObjectLayer } from "@/features/office";
 import { ProjectExperienceLauncher } from "@/features/projects";
 import { RecruiterDashboard, RecruiterModeToggle } from "@/features/recruiter";
@@ -99,6 +100,7 @@ export function OfficeScene() {
             <RecruiterDashboard />
             <ProjectExperienceLauncher />
             <VoiceIndicator />
+            <DigitalTwinRuntime />
           </ConversationProvider>
         </>
       ) : null}
