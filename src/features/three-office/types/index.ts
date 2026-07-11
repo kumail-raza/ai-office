@@ -28,6 +28,8 @@ export interface LightingPreset {
   ambient: { intensity: number; color: string };
   hemisphere: { skyColor: string; groundColor: string; intensity: number };
   directional: DirectionalLightPreset;
+  /** Procedural environment-map contribution (null = none). */
+  environment: { intensity: number } | null;
 }
 
 /** Which placeholder mesh a scene node renders. */
@@ -63,4 +65,54 @@ export interface ThreeOfficeNode {
 export interface CameraPose {
   position: ScenePosition;
   target: ScenePosition;
+}
+
+/** Predefined camera vantage points around the office. */
+export enum CameraZone {
+  Entry = "entry",
+  Desk = "desk",
+  Bookshelf = "bookshelf",
+  Window = "window",
+  Avatar = "avatar",
+}
+
+/** What the scene camera is currently doing. */
+export type CameraView =
+  | { kind: "zone"; zone: CameraZone }
+  | { kind: "focus"; position: ScenePosition };
+
+/** Compositional regions of the office environment. */
+export enum OfficeArea {
+  Desk = "desk",
+  Bookshelf = "bookshelf",
+  Window = "window",
+  Decoration = "decoration",
+  Avatar = "avatar",
+}
+
+/* ---- Asset pipeline ---- */
+
+/** Every model the office can load. Files may not exist yet — see the manifest. */
+export enum OfficeAssetId {
+  Desk = "desk",
+  Chair = "chair",
+  Monitor = "monitor",
+  Bookshelf = "bookshelf",
+  Plant = "plant",
+  Certificate = "certificate",
+  Window = "window",
+}
+
+export interface AssetDefinition {
+  id: OfficeAssetId;
+  /** Public URL of the .glb file. Only the asset registry knows paths. */
+  url: string;
+}
+
+/** Lifecycle of a registered asset. */
+export enum AssetStatus {
+  /** Not in the shipped manifest (or failed to load) — placeholder renders. */
+  Unavailable = "unavailable",
+  Loading = "loading",
+  Ready = "ready",
 }

@@ -5,3 +5,4 @@ export { CameraRig } from "./CameraRig";
 export { SceneLighting } from "./SceneLighting";
 export { InteractiveNode } from "./InteractiveNode";
 export { RoomShell } from "./RoomShell";
+export { OfficeEnvironment } from "./OfficeEnvironment";

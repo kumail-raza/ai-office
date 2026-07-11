@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { useEffect } from "react";
 
 import { useAppStore } from "@/stores/app.store";
 
@@ -21,6 +22,16 @@ export function LoaderScene() {
   const goToTransition = useAppStore((s) => s.goToTransition);
 
   const { phase, progress, messageIndex, reducedMotion, finishExit } = useLoaderSequence();
+
+  // Warm the 3D office while the boot sequence plays: the dynamic import keeps
+  // three.js out of the initial bundle, and preloadAll() fetches any shipped
+  // office models so "Enter 3D" opens instantly. Failures are silently ignored
+  // — the loader must never depend on the 3D stack.
+  useEffect(() => {
+    void import("@/features/three-office/loaders")
+      .then((loaders) => loaders.assetPreloader.preloadAll())
+      .catch(() => undefined);
+  }, []);
 
   const isExiting = phase === "ready" || phase === "completed";
 

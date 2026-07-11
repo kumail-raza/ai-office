@@ -4,7 +4,7 @@ import { memo, useCallback } from "react";
 import type { ThreeEvent } from "@react-three/fiber";
 
 import type { ThreeOfficeNode } from "../../types";
-import { MESH_BY_KIND } from "../meshes";
+import { OfficeModel } from "../../models/OfficeModel";
 import { UNIT_CYLINDER, standardMaterial } from "../meshes/resources";
 
 export interface InteractiveNodeProps {
@@ -34,8 +34,6 @@ export const InteractiveNode = memo(function InteractiveNode({
   onHover,
   onSelect,
 }: InteractiveNodeProps) {
-  const Mesh = MESH_BY_KIND[node.transform.kind];
-
   const handleOver = useCallback(
     (event: ThreeEvent<PointerEvent>) => {
       event.stopPropagation();
@@ -66,7 +64,7 @@ export const InteractiveNode = memo(function InteractiveNode({
       onPointerOut={handleOut}
       onClick={handleClick}
     >
-      <Mesh />
+      <OfficeModel kind={node.transform.kind} />
       {hovered || selected ? (
         <mesh
           geometry={UNIT_CYLINDER}

@@ -1,46 +1,58 @@
 "use client";
 
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import { Canvas } from "@react-three/fiber";
 
-import { OfficeObjectRegistry, useOfficeInteraction } from "@/features/office";
+import { useOfficeInteraction } from "@/features/office";
 
-import { CAMERA_CONFIG, DECOR_TRANSFORMS, DEFAULT_CAMERA_POSE, OBJECT_TRANSFORMS } from "../../constants";
-import type { ScenePosition, ThreeOfficeNode } from "../../types";
-import { AvatarAnchor } from "../AvatarAnchor";
+import { CAMERA_CONFIG, DEFAULT_CAMERA_POSE, OBJECT_CAMERA_ZONE, OBJECT_TRANSFORMS } from "../../constants";
+import { assetPreloader } from "../../loaders/AssetPreloader";
+import { type CameraView, CameraZone, type ThreeOfficeNode } from "../../types";
 import { CameraRig } from "../CameraRig";
-import { InteractiveNode } from "../InteractiveNode";
-import { MESH_BY_KIND } from "../meshes";
-import { RoomShell } from "../RoomShell";
+import { OfficeEnvironment } from "../OfficeEnvironment";
 import { SceneLighting } from "../SceneLighting";
 
 /**
- * The 3D office. Reads interactive objects from the OfficeObjectRegistry (the
- * single source of truth) and proxies hover/select through the existing office
- * interaction context, so experiences, analytics, and the conversation layer
- * behave identically to the 2D office. Rendered lazily — this module and the
- * three.js stack load only when the 3D view is opened.
+ * The 3D office. Composes the environment (which reads the
+ * OfficeObjectRegistry — the single source of truth) and proxies hover/select
+ * through the existing office interaction context, so experiences, analytics,
+ * and the conversation layer behave identically to the 2D office. Rendered
+ * lazily — this module and the three.js stack load only when the 3D view opens.
  */
 export default function ThreeOfficeScene() {
   const { hoveredId, selectedObject, setHovered, selectObject } = useOfficeInteraction();
 
-  const nodes = useMemo<ThreeOfficeNode[]>(
-    () =>
-      OfficeObjectRegistry.getAll().flatMap((object) => {
-        const transform = OBJECT_TRANSFORMS[object.id];
-        return transform ? [{ object, transform }] : [];
-      }),
-    [],
-  );
+  // Belt and braces: the loader flow preloads assets, but entering 3D directly
+  // (e.g. after a hot reload) must also work. preloadAll() is idempotent.
+  useEffect(() => {
+    void assetPreloader.preloadAll();
+  }, []);
 
   const handleSelect = useCallback(
     (node: ThreeOfficeNode) => selectObject(node.object),
     [selectObject],
   );
 
-  const focusPosition = useMemo<ScenePosition | null>(() => {
-    if (!selectedObject) return null;
-    return OBJECT_TRANSFORMS[selectedObject.id]?.position ?? null;
+  const interaction = useMemo(
+    () => ({
+      hoveredId,
+      selectedId: selectedObject?.id ?? null,
+      onHover: setHovered,
+      onSelect: handleSelect,
+    }),
+    [hoveredId, selectedObject, setHovered, handleSelect],
+  );
+
+  // Selected object → its camera zone when one is defined, else a generic
+  // focus on its position; nothing selected → the Entry overview.
+  const view = useMemo<CameraView>(() => {
+    if (!selectedObject) return { kind: "zone", zone: CameraZone.Entry };
+
+    const zone = OBJECT_CAMERA_ZONE[selectedObject.id];
+    if (zone) return { kind: "zone", zone };
+
+    const position = OBJECT_TRANSFORMS[selectedObject.id]?.position;
+    return position ? { kind: "focus", position } : { kind: "zone", zone: CameraZone.Entry };
   }, [selectedObject]);
 
   return (
@@ -57,34 +69,8 @@ export default function ThreeOfficeScene() {
       onPointerMissed={() => setHovered(null)}
     >
       <SceneLighting />
-      <CameraRig focusPosition={focusPosition} />
-      <RoomShell />
-
-      {DECOR_TRANSFORMS.map((transform, index) => {
-        const Mesh = MESH_BY_KIND[transform.kind];
-        return (
-          <group
-            key={`${transform.kind}-${index}`}
-            position={transform.position}
-            rotation={[0, transform.rotationY ?? 0, 0]}
-          >
-            <Mesh />
-          </group>
-        );
-      })}
-
-      {nodes.map((node) => (
-        <InteractiveNode
-          key={node.object.id}
-          node={node}
-          hovered={hoveredId === node.object.id}
-          selected={selectedObject?.id === node.object.id}
-          onHover={setHovered}
-          onSelect={handleSelect}
-        />
-      ))}
-
-      <AvatarAnchor />
+      <CameraRig view={view} />
+      <OfficeEnvironment interaction={interaction} />
     </Canvas>
   );
 }

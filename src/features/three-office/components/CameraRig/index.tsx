@@ -4,21 +4,21 @@ import { useEffect, useRef } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
 import type { PerspectiveCamera } from "three";
 
-import { CAMERA_CONFIG, DEFAULT_CAMERA_POSE } from "../../constants";
+import { CAMERA_CONFIG, CAMERA_ZONES, DEFAULT_CAMERA_POSE } from "../../constants";
 import { CameraController } from "../../managers/CameraController";
-import type { ScenePosition } from "../../types";
+import { type CameraView, CameraZone } from "../../types";
 
 export interface CameraRigProps {
-  /** World position to frame, or null to rest at the overview pose. */
-  focusPosition: ScenePosition | null;
+  /** Where the camera should be: a named zone or an ad-hoc object focus. */
+  view: CameraView;
 }
 
 /**
  * Bridges the framework-agnostic CameraController into the R3F frame loop.
- * When an object is selected the camera glides in to frame it; on deselect it
- * returns to the idle overview drift.
+ * Named zones glide to their predefined pose (Entry resumes the idle drift);
+ * focus views frame an arbitrary world position.
  */
-export function CameraRig({ focusPosition }: CameraRigProps) {
+export function CameraRig({ view }: CameraRigProps) {
   const camera = useThree((state) => state.camera);
 
   const controllerRef = useRef<CameraController | null>(null);
@@ -34,15 +34,23 @@ export function CameraRig({ focusPosition }: CameraRigProps) {
   useEffect(() => {
     const controller = controllerRef.current;
     if (!controller) return;
-    if (focusPosition) {
-      controller.focusObject(focusPosition, {
+
+    if (view.kind === "focus") {
+      controller.focusObject(view.position, {
         distance: CAMERA_CONFIG.focusDistance,
         lift: CAMERA_CONFIG.focusLift,
       });
-    } else {
-      controller.reset();
+      return;
     }
-  }, [focusPosition]);
+
+    if (view.zone === CameraZone.Entry) {
+      controller.reset();
+      return;
+    }
+
+    const pose = CAMERA_ZONES[view.zone];
+    controller.moveTo(pose.position, pose.target);
+  }, [view]);
 
   useFrame((_, deltaSec) => {
     controllerRef.current?.update(deltaSec * 1000, camera as PerspectiveCamera);
