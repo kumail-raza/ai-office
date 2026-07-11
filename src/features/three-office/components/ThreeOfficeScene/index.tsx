@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Canvas } from "@react-three/fiber";
 
 import { useOfficeInteraction } from "@/features/office";
@@ -20,7 +20,8 @@ import { SceneLighting } from "../SceneLighting";
  * lazily — this module and the three.js stack load only when the 3D view opens.
  */
 export default function ThreeOfficeScene() {
-  const { hoveredId, selectedObject, setHovered, selectObject } = useOfficeInteraction();
+  const { hoveredId, selectedObject, setHovered, selectObject, closePanel } = useOfficeInteraction();
+  const [avatarFocused, setAvatarFocused] = useState(false);
 
   // Belt and braces: the loader flow preloads assets, but entering 3D directly
   // (e.g. after a hot reload) must also work. preloadAll() is idempotent.
@@ -29,9 +30,22 @@ export default function ThreeOfficeScene() {
   }, []);
 
   const handleSelect = useCallback(
-    (node: ThreeOfficeNode) => selectObject(node.object),
+    (node: ThreeOfficeNode) => {
+      setAvatarFocused(false);
+      selectObject(node.object);
+    },
     [selectObject],
   );
+
+  const handleSelectAvatar = useCallback(() => {
+    closePanel();
+    setAvatarFocused(true);
+  }, [closePanel]);
+
+  const handlePointerMissed = useCallback(() => {
+    setHovered(null);
+    setAvatarFocused(false);
+  }, [setHovered]);
 
   const interaction = useMemo(
     () => ({
@@ -43,9 +57,11 @@ export default function ThreeOfficeScene() {
     [hoveredId, selectedObject, setHovered, handleSelect],
   );
 
-  // Selected object → its camera zone when one is defined, else a generic
-  // focus on its position; nothing selected → the Entry overview.
+  // Avatar click → AVATAR zone; else selected object → its camera zone when
+  // one is defined, else a generic focus on its position; nothing selected →
+  // the Entry overview.
   const view = useMemo<CameraView>(() => {
+    if (avatarFocused) return { kind: "zone", zone: CameraZone.Avatar };
     if (!selectedObject) return { kind: "zone", zone: CameraZone.Entry };
 
     const zone = OBJECT_CAMERA_ZONE[selectedObject.id];
@@ -53,7 +69,7 @@ export default function ThreeOfficeScene() {
 
     const position = OBJECT_TRANSFORMS[selectedObject.id]?.position;
     return position ? { kind: "focus", position } : { kind: "zone", zone: CameraZone.Entry };
-  }, [selectedObject]);
+  }, [avatarFocused, selectedObject]);
 
   return (
     <Canvas
@@ -66,11 +82,11 @@ export default function ThreeOfficeScene() {
         position: DEFAULT_CAMERA_POSE.position,
       }}
       // Pointer misses clear hover state so the 2D layer stays in sync.
-      onPointerMissed={() => setHovered(null)}
+      onPointerMissed={handlePointerMissed}
     >
       <SceneLighting />
       <CameraRig view={view} />
-      <OfficeEnvironment interaction={interaction} />
+      <OfficeEnvironment interaction={interaction} onSelectAvatar={handleSelectAvatar} />
     </Canvas>
   );
 }

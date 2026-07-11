@@ -95,6 +95,6 @@ export function DecorationArea(props: AreaProps) {
 }
 
 /** Placeholder region reserved for the digital twin's future 3D body. */
-export function AvatarArea() {
-  return <AvatarAnchor />;
+export function AvatarArea({ onSelect }: { onSelect?: () => void }) {
+  return <AvatarAnchor onSelect={onSelect} />;
 }

@@ -18,6 +18,8 @@ import {
 
 export interface OfficeEnvironmentProps {
   interaction: AreaInteraction;
+  /** Fires when the avatar anchor is clicked, so the camera can frame it. */
+  onSelectAvatar?: () => void;
 }
 
 /**
@@ -26,7 +28,7 @@ export interface OfficeEnvironmentProps {
  * truth) and are dealt to their areas by id — adding an object means one
  * registry entry, one transform, and one area-id line, no scene surgery.
  */
-export function OfficeEnvironment({ interaction }: OfficeEnvironmentProps) {
+export function OfficeEnvironment({ interaction, onSelectAvatar }: OfficeEnvironmentProps) {
   const nodesByArea = useMemo(() => {
     const nodes = OfficeObjectRegistry.getAll().flatMap<ThreeOfficeNode>((object) => {
       const transform = OBJECT_TRANSFORMS[object.id];
@@ -47,7 +49,7 @@ export function OfficeEnvironment({ interaction }: OfficeEnvironmentProps) {
       <BookshelfArea nodes={nodesByArea[OfficeArea.Bookshelf]} interaction={interaction} />
       <WindowArea nodes={nodesByArea[OfficeArea.Window]} interaction={interaction} />
       <DecorationArea nodes={nodesByArea[OfficeArea.Decoration]} interaction={interaction} />
-      <AvatarArea />
+      <AvatarArea onSelect={onSelectAvatar} />
     </group>
   );
 }

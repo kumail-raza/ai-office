@@ -1,7 +1,8 @@
 "use client";
 
-import { useRef } from "react";
+import { useCallback, useRef } from "react";
 import { useFrame } from "@react-three/fiber";
+import type { ThreeEvent } from "@react-three/fiber";
 import type { Group } from "three";
 
 import { STATE_VISUAL, useAvatar } from "@/features/digital-twin";
@@ -9,13 +10,19 @@ import { STATE_VISUAL, useAvatar } from "@/features/digital-twin";
 import { AVATAR_ANCHOR_POSITION } from "../../constants";
 import { UNIT_CYLINDER, UNIT_SPHERE, standardMaterial } from "../meshes/resources";
 
+export interface AvatarAnchorProps {
+  /** Fires on click so the camera can glide to CameraZone.Avatar. */
+  onSelect?: () => void;
+}
+
 /**
  * Reserved mount point for the future 3D avatar. No model yet — just the
  * location plus a live link to the AvatarManager: the marker breathes and its
  * state ring recolours with the runtime, proving the integration a Ready
- * Player Me / MetaHuman body will later consume unchanged.
+ * Player Me / MetaHuman body will later consume unchanged. Clickable so the
+ * AVATAR camera zone has a real trigger, matching every other office object.
  */
-export function AvatarAnchor() {
+export function AvatarAnchor({ onSelect }: AvatarAnchorProps) {
   const { currentState } = useAvatar();
   const groupRef = useRef<Group>(null);
 
@@ -29,8 +36,31 @@ export function AvatarAnchor() {
     group.scale.set(s, s, s);
   });
 
+  const handleOver = useCallback((event: ThreeEvent<PointerEvent>) => {
+    event.stopPropagation();
+    document.body.style.cursor = "pointer";
+  }, []);
+
+  const handleOut = useCallback(() => {
+    document.body.style.cursor = "";
+  }, []);
+
+  const handleClick = useCallback(
+    (event: ThreeEvent<MouseEvent>) => {
+      event.stopPropagation();
+      onSelect?.();
+    },
+    [onSelect],
+  );
+
   return (
-    <group ref={groupRef} position={AVATAR_ANCHOR_POSITION}>
+    <group
+      ref={groupRef}
+      position={AVATAR_ANCHOR_POSITION}
+      onPointerOver={handleOver}
+      onPointerOut={handleOut}
+      onClick={handleClick}
+    >
       <mesh
         geometry={UNIT_SPHERE}
         material={standardMaterial("#dbe4f0", { roughness: 0.35 })}
