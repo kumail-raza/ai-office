@@ -36,6 +36,12 @@ export function useAnimationFrame(
   const stoppedRef = useRef(false);
 
   useEffect(() => {
+    // Reset per-mount state: under React StrictMode the effect runs
+    // mount → cleanup → mount, and the cleanup sets stoppedRef to true. Without
+    // this reset the remounted loop would exit immediately and never tick.
+    stoppedRef.current = false;
+    lastTimeRef.current = null;
+
     const loop = (now: number): void => {
       if (stoppedRef.current) return;
 

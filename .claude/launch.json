@@ -5,12 +5,14 @@
       "name": "ai-office",
       "runtimeExecutable": "pnpm",
       "runtimeArgs": ["start"],
+      "autoPort": true,
       "port": 3000
     },
     {
       "name": "ai-office-dev",
       "runtimeExecutable": "pnpm",
-      "runtimeArgs": ["dev", "--port", "3010"],
+      "runtimeArgs": ["dev"],
+      "autoPort": true,
       "port": 3010
     }
   ]
