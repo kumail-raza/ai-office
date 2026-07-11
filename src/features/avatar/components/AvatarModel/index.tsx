@@ -3,14 +3,15 @@
 import { useEffect, useRef } from "react";
 import type { AnimationClip, Object3D } from "three";
 
+import { type FaceRig, MorphFaceRig, ProceduralFaceRig } from "../../face";
 import type { AvatarRig, LoadedAvatar } from "../../types";
-import { ProceduralAvatar } from "../ProceduralAvatar";
+import { ProceduralAvatar, type ProceduralAvatarHandle } from "../ProceduralAvatar";
 
 export interface AvatarModelProps {
   /** Parsed GLB/GLTF, or null to render the procedural fallback. */
   loaded: LoadedAvatar | null;
-  /** Called once the rig is mountable, with any clips the model carries. */
-  onRigReady: (rig: AvatarRig, clips: AnimationClip[]) => void;
+  /** Called once the rig is mountable, with its face rig and any clips. */
+  onRigReady: (rig: AvatarRig, faceRig: FaceRig, clips: AnimationClip[]) => void;
 }
 
 /** Common head/arm node names across Mixamo / Ready Player Me / custom rigs. */
@@ -27,30 +28,29 @@ function findNode(root: Object3D, names: string[]): Object3D | null {
 
 /**
  * Renders the avatar body — the real .glb model when one loaded, else the
- * procedural fallback — and reports its rig upward so the animator can drive it.
- * A missing model is not an error here; it simply means the fallback renders.
+ * procedural fallback — and reports its rig + face rig upward so the presence
+ * system can drive them. A missing model is not an error; the fallback renders,
+ * and a GLB with no blend shapes still animates via body/head motion.
  */
 export function AvatarModel({ loaded, onRigReady }: AvatarModelProps) {
-  const proceduralRigRef = useRef<AvatarRig>(null);
+  const proceduralRef = useRef<ProceduralAvatarHandle>(null);
 
   useEffect(() => {
     if (!loaded) return;
-    onRigReady(
-      {
-        root: loaded.scene,
-        head: findNode(loaded.scene, HEAD_NAMES),
-        armRight: findNode(loaded.scene, ARM_RIGHT_NAMES),
-      },
-      loaded.animations,
-    );
+    const rig: AvatarRig = {
+      root: loaded.scene,
+      head: findNode(loaded.scene, HEAD_NAMES),
+      armRight: findNode(loaded.scene, ARM_RIGHT_NAMES),
+    };
+    onRigReady(rig, new MorphFaceRig(loaded.scene), loaded.animations);
   }, [loaded, onRigReady]);
 
   useEffect(() => {
-    if (loaded || !proceduralRigRef.current) return;
-    // The procedural figure carries no clips → ProceduralAnimator.
-    onRigReady(proceduralRigRef.current, []);
+    if (loaded || !proceduralRef.current) return;
+    const { rig, faceParts } = proceduralRef.current;
+    onRigReady(rig, new ProceduralFaceRig(faceParts), []);
   }, [loaded, onRigReady]);
 
   if (loaded) return <primitive object={loaded.scene} />;
-  return <ProceduralAvatar ref={proceduralRigRef} />;
+  return <ProceduralAvatar ref={proceduralRef} />;
 }

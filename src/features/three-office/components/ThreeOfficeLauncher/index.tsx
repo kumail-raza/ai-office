@@ -3,6 +3,9 @@
 import dynamic from "next/dynamic";
 import { useCallback, useEffect, useRef, useState } from "react";
 
+// Direct leaf import (not the @/features/avatar barrel) so this eagerly-loaded
+// launcher never pulls the three.js avatar graph into the initial bundle.
+import { AvatarPresenceDebugPanel } from "@/features/avatar/components/AvatarPresenceDebugPanel";
 import { useOfficeInteraction } from "@/features/office";
 
 import { useWebGLSupport } from "../../hooks/useWebGLSupport";
@@ -64,6 +67,8 @@ export function ThreeOfficeLauncher() {
               <ThreeOfficeScene />
             </SceneErrorBoundary>
           </div>
+          {/* Dev-only presence controls (tree-shaken from production builds). */}
+          <AvatarPresenceDebugPanel />
         </div>
       ) : null}
 

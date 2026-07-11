@@ -1,10 +1,4 @@
-import {
-  BoxGeometry,
-  CapsuleGeometry,
-  CylinderGeometry,
-  MeshStandardMaterial,
-  SphereGeometry,
-} from "three";
+import { BoxGeometry, CapsuleGeometry, MeshStandardMaterial, SphereGeometry } from "three";
 
 /**
  * Shared, memoized geometries + materials for the procedural avatar. Kept
@@ -14,7 +8,6 @@ import {
 
 export const HEAD_GEOMETRY = new SphereGeometry(0.5, 24, 20);
 export const CAPSULE_GEOMETRY = new CapsuleGeometry(0.5, 1, 6, 16);
-export const CYLINDER_GEOMETRY = new CylinderGeometry(0.5, 0.5, 1, 16);
 export const BOX_GEOMETRY = new BoxGeometry(1, 1, 1);
 
 const materialCache = new Map<string, MeshStandardMaterial>();

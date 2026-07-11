@@ -5,12 +5,13 @@ import { useFrame } from "@react-three/fiber";
 import type { ThreeEvent } from "@react-three/fiber";
 import type { AnimationClip } from "three";
 
+import type { FaceRig } from "../../face";
+import { PresenceSystem } from "../../presence";
 import { AvatarRegistry } from "../../services/AvatarRegistry";
 import { AvatarRuntimeAdapter } from "../../services/AvatarRuntimeAdapter";
-import { createAnimator } from "../../services/animation/createAnimator";
 import { avatarEvents } from "../../services/avatarEvents";
 import { useAvatarModel } from "../../hooks/useAvatarModel";
-import type { AvatarAnimator, AvatarPlacement, AvatarRig } from "../../types";
+import type { AvatarPlacement, AvatarRig } from "../../types";
 import { AvatarModel } from "../AvatarModel";
 
 export interface OfficeAvatarProps {
@@ -33,27 +34,27 @@ function OfficeAvatarBody({ onSelect }: { onSelect?: () => void }) {
   const adapterRef = useRef<AvatarRuntimeAdapter | null>(null);
   if (adapterRef.current === null) adapterRef.current = new AvatarRuntimeAdapter();
 
-  const rigRef = useRef<AvatarRig | null>(null);
-  const animatorRef = useRef<AvatarAnimator | null>(null);
+  const presenceRef = useRef<PresenceSystem | null>(null);
 
-  const handleRigReady = useCallback((rig: AvatarRig, clips: AnimationClip[]) => {
-    rigRef.current = rig;
-    animatorRef.current?.dispose();
-    animatorRef.current = createAnimator(rig, clips);
-  }, []);
+  const handleRigReady = useCallback(
+    (rig: AvatarRig, faceRig: FaceRig, clips: AnimationClip[]) => {
+      presenceRef.current?.dispose();
+      presenceRef.current = new PresenceSystem(rig, faceRig, clips);
+    },
+    [],
+  );
 
   useEffect(() => {
     return () => {
-      animatorRef.current?.dispose();
-      animatorRef.current = null;
+      presenceRef.current?.dispose();
+      presenceRef.current = null;
     };
   }, []);
 
   useFrame((_, deltaSec) => {
-    const rig = rigRef.current;
-    const animator = animatorRef.current;
-    if (!rig || !animator || !adapterRef.current) return;
-    animator.update(rig, adapterRef.current.sample(deltaSec));
+    const presence = presenceRef.current;
+    if (!presence || !adapterRef.current) return;
+    presence.update(adapterRef.current.sample(deltaSec));
   });
 
   const handleOver = useCallback((event: ThreeEvent<PointerEvent>) => {

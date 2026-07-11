@@ -82,7 +82,9 @@ export default function ThreeOfficeScene() {
 
   return (
     <Canvas
-      shadows
+      // "percentage" = PCFShadowMap; the default (true → PCFSoftShadowMap) is
+      // deprecated in three r0.185 and logs a console warning.
+      shadows="percentage"
       dpr={[1, 2]}
       camera={{
         fov: CAMERA_CONFIG.fov,
