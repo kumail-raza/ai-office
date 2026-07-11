@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 
-import { ConversationStatus, MessageRole, useConversation } from "@/features/conversation";
+import { ConversationStatus, useConversation } from "@/features/conversation";
 import { PresenceState, presenceManager } from "@/features/voice";
 
 import { useAvatar } from "../../hooks/useAvatar";
@@ -20,24 +20,16 @@ const LISTEN_MS = 300;
  * speaking presence, so we defer the return-to-idle to it in that case.
  */
 export function ConversationAvatarBridge() {
-  const { status, messages } = useConversation();
+  const { status } = useConversation();
   const { actions } = useAvatar();
-  const prevCount = useRef(messages.length);
 
-  // A newly sent user message → acknowledge by listening.
-  useEffect(() => {
-    const last = messages[messages.length - 1];
-    if (messages.length > prevCount.current && last?.role === MessageRole.User) {
-      actions.setState(AvatarState.Listening);
-    }
-    prevCount.current = messages.length;
-  }, [messages, actions]);
-
-  // Conversation status → avatar state.
   useEffect(() => {
     switch (status) {
       case ConversationStatus.Thinking: {
-        // Hold the listening beat briefly, then shift into thinking.
+        // A message was just sent: acknowledge by listening, then shift into
+        // thinking. (The provider appends the user + reply together, so the
+        // status transition is the reliable "just sent" signal.)
+        actions.setState(AvatarState.Listening);
         const timer = window.setTimeout(() => actions.setState(AvatarState.Thinking), LISTEN_MS);
         return () => window.clearTimeout(timer);
       }
