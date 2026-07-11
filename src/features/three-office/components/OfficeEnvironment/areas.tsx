@@ -2,10 +2,11 @@
 
 import { memo } from "react";
 
-import { AREA_DECOR } from "../../constants";
+import { OfficeAvatar } from "@/features/avatar";
+
+import { AREA_DECOR, AVATAR_PLACEMENT } from "../../constants";
 import { OfficeArea, type OfficeMeshTransform, type ThreeOfficeNode } from "../../types";
 import { OfficeModel } from "../../models/OfficeModel";
-import { AvatarAnchor } from "../AvatarAnchor";
 import { InteractiveNode } from "../InteractiveNode";
 
 export interface AreaInteraction {
@@ -94,7 +95,7 @@ export function DecorationArea(props: AreaProps) {
   );
 }
 
-/** Placeholder region reserved for the digital twin's future 3D body. */
+/** The digital twin's 3D body, placed near the desk facing the visitor. */
 export function AvatarArea({ onSelect }: { onSelect?: () => void }) {
-  return <AvatarAnchor onSelect={onSelect} />;
+  return <OfficeAvatar placement={AVATAR_PLACEMENT} onSelect={onSelect} />;
 }

@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Canvas } from "@react-three/fiber";
 
+import { AvatarState, useAvatar } from "@/features/digital-twin";
 import { useOfficeInteraction } from "@/features/office";
 
 import { CAMERA_CONFIG, DEFAULT_CAMERA_POSE, OBJECT_CAMERA_ZONE, OBJECT_TRANSFORMS } from "../../constants";
@@ -21,7 +22,15 @@ import { SceneLighting } from "../SceneLighting";
  */
 export default function ThreeOfficeScene() {
   const { hoveredId, selectedObject, setHovered, selectObject, closePanel } = useOfficeInteraction();
-  const [avatarFocused, setAvatarFocused] = useState(false);
+  const { currentState } = useAvatar();
+  const [avatarClicked, setAvatarClicked] = useState(false);
+
+  // "Entering a conversation" = the runtime is in an active turn. The camera
+  // then focuses the avatar so the visitor watches it react (focusAvatar()).
+  const conversationActive =
+    currentState === AvatarState.Listening ||
+    currentState === AvatarState.Thinking ||
+    currentState === AvatarState.Speaking;
 
   // Belt and braces: the loader flow preloads assets, but entering 3D directly
   // (e.g. after a hot reload) must also work. preloadAll() is idempotent.
@@ -31,7 +40,7 @@ export default function ThreeOfficeScene() {
 
   const handleSelect = useCallback(
     (node: ThreeOfficeNode) => {
-      setAvatarFocused(false);
+      setAvatarClicked(false);
       selectObject(node.object);
     },
     [selectObject],
@@ -39,12 +48,12 @@ export default function ThreeOfficeScene() {
 
   const handleSelectAvatar = useCallback(() => {
     closePanel();
-    setAvatarFocused(true);
+    setAvatarClicked(true);
   }, [closePanel]);
 
   const handlePointerMissed = useCallback(() => {
     setHovered(null);
-    setAvatarFocused(false);
+    setAvatarClicked(false);
   }, [setHovered]);
 
   const interaction = useMemo(
@@ -57,11 +66,11 @@ export default function ThreeOfficeScene() {
     [hoveredId, selectedObject, setHovered, handleSelect],
   );
 
-  // Avatar click → AVATAR zone; else selected object → its camera zone when
-  // one is defined, else a generic focus on its position; nothing selected →
-  // the Entry overview.
+  // Active conversation or an avatar click → AVATAR zone; else selected object
+  // → its camera zone when one is defined, else a generic focus on its
+  // position; nothing selected → the Entry overview.
   const view = useMemo<CameraView>(() => {
-    if (avatarFocused) return { kind: "zone", zone: CameraZone.Avatar };
+    if (conversationActive || avatarClicked) return { kind: "zone", zone: CameraZone.Avatar };
     if (!selectedObject) return { kind: "zone", zone: CameraZone.Entry };
 
     const zone = OBJECT_CAMERA_ZONE[selectedObject.id];
@@ -69,7 +78,7 @@ export default function ThreeOfficeScene() {
 
     const position = OBJECT_TRANSFORMS[selectedObject.id]?.position;
     return position ? { kind: "focus", position } : { kind: "zone", zone: CameraZone.Entry };
-  }, [avatarFocused, selectedObject]);
+  }, [conversationActive, avatarClicked, selectedObject]);
 
   return (
     <Canvas

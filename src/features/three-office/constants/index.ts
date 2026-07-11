@@ -6,12 +6,11 @@ import {
   OfficeArea,
   OfficeMeshKind,
   type OfficeMeshTransform,
-  type ScenePosition,
 } from "../types";
 
 import { CAMERA_ZONES } from "./cameraZones";
 
-export { AREA_OBJECT_IDS, CAMERA_ZONES, OBJECT_CAMERA_ZONE } from "./cameraZones";
+export { AREA_OBJECT_IDS, AVATAR_PLACEMENT, CAMERA_ZONES, OBJECT_CAMERA_ZONE } from "./cameraZones";
 
 /**
  * 3D transforms for interactive registry objects, keyed by registry object id.
@@ -40,9 +39,6 @@ export const AREA_DECOR: Record<OfficeArea, OfficeMeshTransform[]> = {
   ],
   [OfficeArea.Avatar]: [],
 };
-
-/** Where the digital twin will stand/sit once a 3D avatar exists. */
-export const AVATAR_ANCHOR_POSITION: ScenePosition = [0, 0.55, 0.55];
 
 /** The resting overview pose is the Entry camera zone. */
 export const DEFAULT_CAMERA_POSE: CameraPose = CAMERA_ZONES[CameraZone.Entry];
