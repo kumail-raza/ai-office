@@ -1,0 +1,75 @@
+.toggle {
+  position: fixed;
+  top: 10.4rem;
+  left: 1.1rem;
+  z-index: 9;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 0.45rem 0.9rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  background: var(--color-surface-strong);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  box-shadow: 0 10px 24px var(--shadow-soft);
+  backdrop-filter: blur(var(--blur-glass));
+  -webkit-backdrop-filter: blur(var(--blur-glass));
+  cursor: pointer;
+}
+
+.toggle:hover {
+  transform: translateY(-1px);
+}
+
+.badge {
+  padding: 0.05rem 0.4rem;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #ffffff;
+  background: #5b8def;
+  border-radius: var(--radius-full);
+}
+
+/* Above the 2D hotspot layer (5), below experiences (7+) and the HUD. */
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 6;
+  background: #dfe7f2;
+}
+
+.canvasHost {
+  position: absolute;
+  inset: 0;
+}
+
+.loading {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+}
+
+.error {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: var(--space-5);
+  text-align: center;
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+}
+
+@media (max-width: 640px) {
+  .toggle {
+    top: 8.4rem;
+    left: 0.6rem;
+  }
+}

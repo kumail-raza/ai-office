@@ -8,6 +8,7 @@ import { AvatarPresencePanel, ConversationAvatarBridge, DigitalTwinRuntime } fro
 import { OfficeExperience, OfficeInteractionProvider, OfficeObjectLayer } from "@/features/office";
 import { ProjectExperienceLauncher } from "@/features/projects";
 import { RecruiterDashboard, RecruiterModeToggle } from "@/features/recruiter";
+import { ThreeOfficeLauncher } from "@/features/three-office";
 import { VoiceIndicator } from "@/features/voice";
 import { useAppStore } from "@/stores/app.store";
 
@@ -92,6 +93,7 @@ export function OfficeScene() {
           <OfficeInteractionProvider>
             <OfficeObjectLayer />
             <OfficeExperience />
+            <ThreeOfficeLauncher />
           </OfficeInteractionProvider>
 
           <ConversationProvider>

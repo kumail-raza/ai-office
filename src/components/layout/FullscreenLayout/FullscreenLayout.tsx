@@ -14,11 +14,15 @@ export function FullscreenLayout<T extends ElementType = "div">({
   children,
   ...rest
 }: FullscreenLayoutProps<T>) {
-  const Component = as ?? "div";
+  // Typed as "div" only for the JSX spread below: with @react-three/fiber's
+  // global JSX augmentation in the program, TS collapses the props of the
+  // generic `T | "div"` tag union to `never`. Runtime behaviour is unchanged
+  // and the public generic API stays fully typed.
+  const Component = (as ?? "div") as "div";
   const combinedClassName = className ? `${styles.root} ${className}` : styles.root;
 
   return (
-    <Component className={combinedClassName} {...rest}>
+    <Component className={combinedClassName} {...(rest as ComponentPropsWithoutRef<"div">)}>
       {children}
     </Component>
   );

@@ -1,6 +1,7 @@
 export { DigitalTwinRuntime } from "./components/DigitalTwinRuntime";
 export { AvatarPresencePanel } from "./components/AvatarPresencePanel";
 export { AvatarView } from "./components/AvatarView";
+export { STATE_VISUAL } from "./components/AvatarView/avatarView.constants";
 export { ConversationAvatarBridge } from "./components/ConversationAvatarBridge";
 export { useAvatar } from "./hooks";
 export { avatarManager } from "./services/AvatarManager";
