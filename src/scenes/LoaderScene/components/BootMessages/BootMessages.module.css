@@ -4,10 +4,11 @@
   align-items: center;
   justify-content: center;
   min-height: 1.5rem;
-  font-family: ui-monospace, "SFMono-Regular", "Menlo", monospace;
+  font-family: var(--font-sans);
   font-size: 0.95rem;
-  letter-spacing: 0.02em;
-  color: #c7d2fe;
+  font-weight: var(--weight-regular);
+  letter-spacing: 0.06em;
+  color: var(--color-text-secondary);
   text-align: center;
 }
 
@@ -19,7 +20,7 @@
   display: inline-block;
   width: 0.55ch;
   margin-left: 1px;
-  color: #a5b4fc;
+  color: var(--color-accent);
 }
 
 @media (max-width: 640px) {

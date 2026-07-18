@@ -9,5 +9,5 @@
   width: 0.5rem;
   height: 0.5rem;
   border-radius: 50%;
-  background: #8a94a6;
+  background: var(--color-accent);
 }

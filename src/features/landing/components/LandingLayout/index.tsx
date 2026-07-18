@@ -7,5 +7,11 @@ interface LandingLayoutProps {
 }
 
 export function LandingLayout({ children }: LandingLayoutProps) {
-  return <FullscreenLayout as="main">{children}</FullscreenLayout>;
+  // The landing is a bright "lobby" (Light Executive) that transitions into the
+  // Dark Executive office — the rest of the app uses the dark default.
+  return (
+    <FullscreenLayout as="main" data-theme="light">
+      {children}
+    </FullscreenLayout>
+  );
 }

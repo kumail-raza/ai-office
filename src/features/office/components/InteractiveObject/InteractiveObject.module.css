@@ -20,32 +20,34 @@
   width: 0.9rem;
   height: 0.9rem;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.9);
-  border: 2px solid rgba(129, 140, 248, 0.9);
-  box-shadow: 0 0 0 4px rgba(129, 140, 248, 0.18);
+  background: rgba(255, 255, 255, 0.95);
+  border: 2px solid var(--color-accent);
+  box-shadow: 0 0 0 4px var(--color-accent-soft);
   transition:
-    box-shadow 0.2s ease,
-    background 0.2s ease;
+    box-shadow var(--duration-base) var(--ease-standard),
+    background var(--duration-base) var(--ease-standard);
 }
 
 .dotActive {
-  background: #a5b4fc;
+  background: var(--color-accent-strong);
   box-shadow:
-    0 0 0 6px rgba(129, 140, 248, 0.3),
-    0 0 20px 4px rgba(129, 140, 248, 0.7);
+    0 0 0 6px var(--color-accent-soft),
+    0 0 20px 4px rgba(201, 168, 106, 0.55);
 }
 
 .label {
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
-  padding: 0.3rem 0.6rem;
+  padding: 0.3rem 0.65rem;
   white-space: nowrap;
   font-size: 0.8rem;
-  font-weight: 600;
-  color: #1f2733;
-  background: rgba(255, 255, 255, 0.92);
-  border: 1px solid rgba(120, 90, 50, 0.16);
-  border-radius: 999px;
-  box-shadow: 0 6px 16px rgba(30, 41, 59, 0.18);
+  font-weight: var(--weight-medium);
+  color: var(--color-text-primary);
+  background: var(--color-surface-strong);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  box-shadow: var(--shadow-2);
+  backdrop-filter: blur(var(--blur-glass));
+  -webkit-backdrop-filter: blur(var(--blur-glass));
 }

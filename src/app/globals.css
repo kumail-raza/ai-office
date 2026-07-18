@@ -1,20 +1,24 @@
-:root {
-  --color-bg: #eef2f8;
-  --color-surface: rgba(255, 255, 255, 0.6);
-  --color-surface-strong: rgba(255, 255, 255, 0.8);
-  --color-border: rgba(255, 255, 255, 0.65);
-  --color-border-soft: #d8dee7;
-  --color-text-primary: #101828;
-  --color-text-body: #344054;
-  --color-text-muted: #475467;
-  --color-text-subtle: #667085;
-  --color-text-placeholder: #98a2b3;
-  --color-accent: #101828;
-  --color-accent-contrast: #ffffff;
-  --color-disabled-bg: #d8dee7;
-  --shadow: rgba(16, 24, 40, 0.15);
-  --shadow-soft: rgba(16, 24, 40, 0.12);
+/* =============================================================================
+   AI OFFICE — DESIGN SYSTEM
+   A single source of truth for the visual language: colour, typography, space,
+   radius, elevation, glass, and motion. Direction: a luxury architecture studio
+   meets Apple Vision Pro — a calm, dark executive office with warm brass light.
+   Default atmosphere is Dark Executive; a Light atmosphere is provided as an
+   alternate via prefers-color-scheme and an explicit [data-theme] override.
+   ========================================================================== */
 
+:root {
+  /* ---- Motion ---------------------------------------------------------- */
+  --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-emphasized: cubic-bezier(0.2, 0, 0, 1);
+  --ease-entrance: cubic-bezier(0.16, 1, 0.3, 1); /* soft, confident settle */
+  --ease-exit: cubic-bezier(0.4, 0, 1, 1);
+  --duration-fast: 0.18s;
+  --duration-base: 0.32s;
+  --duration-slow: 0.6s;
+  --duration-cinematic: 1s;
+
+  /* ---- Spacing --------------------------------------------------------- */
   --space-1: 0.25rem;
   --space-2: 0.5rem;
   --space-3: 0.75rem;
@@ -23,12 +27,120 @@
   --space-6: 2rem;
   --space-7: 3rem;
   --space-8: 4rem;
+  --space-xs: var(--space-1);
+  --space-sm: var(--space-2);
+  --space-md: var(--space-3);
+  --space-lg: var(--space-4);
+  --space-xl: var(--space-5);
+  --space-2xl: var(--space-6);
 
-  --radius-md: 0.65rem;
+  /* ---- Radius ---------------------------------------------------------- */
+  --radius-sm: 0.5rem;
+  --radius-md: 0.85rem;
   --radius-lg: 1.25rem;
+  --radius-xl: 1.75rem;
   --radius-full: 999px;
 
-  --blur-glass: 20px;
+  /* ---- Typography ------------------------------------------------------ */
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-display: "Georgia", "Times New Roman", serif; /* editorial, executive */
+
+  --text-display: clamp(2.4rem, 5vw, 3.6rem);
+  --text-heading: clamp(1.6rem, 3.2vw, 2.1rem);
+  --text-section: 1.15rem;
+  --text-body: 0.95rem;
+  --text-caption: 0.78rem;
+
+  --leading-tight: 1.12;
+  --leading-snug: 1.35;
+  --leading-relaxed: 1.6;
+  --tracking-tight: -0.02em;
+  --tracking-normal: 0;
+  --tracking-wide: 0.08em;
+
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+  --weight-bold: 700;
+
+  /* ---- Colour — DARK EXECUTIVE (default) ------------------------------- */
+  --color-bg: #0b0e14; /* deep ink */
+  --color-bg-elevated: #12161f;
+  --color-surface: rgba(24, 29, 40, 0.66); /* glass */
+  --color-surface-strong: rgba(28, 34, 47, 0.86);
+  --color-panel: rgba(17, 21, 30, 0.9);
+  --color-border: rgba(255, 255, 255, 0.09);
+  --color-border-strong: rgba(255, 255, 255, 0.16);
+  --color-border-soft: rgba(255, 255, 255, 0.06);
+
+  --color-text-primary: #f3f5f9;
+  --color-text-secondary: #b7c0cf;
+  --color-text-muted: #8b95a6;
+  --color-text-subtle: #6a7484;
+  --color-text-placeholder: #58616f;
+  --color-text-body: var(--color-text-secondary); /* legacy alias */
+
+  --color-accent: #c9a86a; /* brass */
+  --color-accent-strong: #dcc084;
+  --color-accent-soft: rgba(201, 168, 106, 0.16);
+  --color-accent-contrast: #14100a;
+
+  --color-success: #6cc39a;
+  --color-warning: #e2a54c;
+  --color-danger: #e0685b;
+
+  --color-disabled-bg: rgba(255, 255, 255, 0.08);
+
+  /* ---- Elevation (shadow system) -------------------------------------- */
+  --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-2: 0 6px 18px rgba(0, 0, 0, 0.45);
+  --shadow-3: 0 18px 44px rgba(0, 0, 0, 0.5);
+  --shadow-4: 0 32px 80px rgba(0, 0, 0, 0.6);
+  /* legacy aliases (kept so existing consumers keep working) */
+  --shadow: rgba(0, 0, 0, 0.5);
+  --shadow-soft: rgba(0, 0, 0, 0.4);
+
+  /* ---- Glass ----------------------------------------------------------- */
+  --blur-glass: 22px;
+  --glass-highlight: rgba(255, 255, 255, 0.06);
+  color-scheme: dark;
+}
+
+/* ---- Colour — LIGHT EXECUTIVE (alternate) ------------------------------ */
+/* Applied to any subtree marked [data-theme="light"] (e.g. the landing lobby),
+   and available app-wide by setting it on <html>. Dark is the hard default. */
+[data-theme="light"] {
+  --color-bg: #e9ecf2;
+  --color-bg-elevated: #f4f6fa;
+  --color-surface: rgba(255, 255, 255, 0.66);
+  --color-surface-strong: rgba(255, 255, 255, 0.86);
+  --color-panel: rgba(255, 255, 255, 0.9);
+  --color-border: rgba(16, 24, 40, 0.1);
+  --color-border-strong: rgba(16, 24, 40, 0.18);
+  --color-border-soft: rgba(16, 24, 40, 0.06);
+
+  --color-text-primary: #141922;
+  --color-text-secondary: #3a4453;
+  --color-text-muted: #576273;
+  --color-text-subtle: #78828f;
+  --color-text-placeholder: #98a2b3;
+
+  --color-accent: #9a7b3e;
+  --color-accent-strong: #7f6430;
+  --color-accent-soft: rgba(154, 123, 62, 0.14);
+  --color-accent-contrast: #ffffff;
+
+  --color-disabled-bg: rgba(16, 24, 40, 0.1);
+
+  --shadow-1: 0 1px 2px rgba(16, 24, 40, 0.08);
+  --shadow-2: 0 6px 18px rgba(16, 24, 40, 0.12);
+  --shadow-3: 0 18px 44px rgba(16, 24, 40, 0.16);
+  --shadow-4: 0 32px 80px rgba(16, 24, 40, 0.2);
+  --shadow: rgba(16, 24, 40, 0.15);
+  --shadow-soft: rgba(16, 24, 40, 0.12);
+
+  --glass-highlight: rgba(255, 255, 255, 0.75);
+  color-scheme: light;
 }
 
 *,
@@ -48,7 +160,68 @@ body {
 
 body {
   height: 100dvh;
-  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-family: var(--font-sans);
+  font-size: var(--text-body);
+  line-height: var(--leading-snug);
   background: var(--color-bg);
   color: var(--color-text-primary);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* ---- Typography utilities --------------------------------------------- */
+.text-display {
+  font-family: var(--font-display);
+  font-size: var(--text-display);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-tight);
+}
+.text-heading {
+  font-size: var(--text-heading);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-tight);
+}
+.text-section {
+  font-size: var(--text-section);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-snug);
+}
+.text-body {
+  font-size: var(--text-body);
+  line-height: var(--leading-relaxed);
+}
+.text-caption {
+  font-size: var(--text-caption);
+  line-height: var(--leading-snug);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  color: var(--color-text-subtle);
+}
+
+/* ---- Reusable glass surface ------------------------------------------- */
+.glass-surface {
+  background: var(--color-surface-strong);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-3), inset 0 1px 0 var(--glass-highlight);
+  backdrop-filter: blur(var(--blur-glass));
+  -webkit-backdrop-filter: blur(var(--blur-glass));
+}
+
+/* ---- Focus ring (accessibility) --------------------------------------- */
+:where(a, button, input, textarea, select, [tabindex]):focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
 }

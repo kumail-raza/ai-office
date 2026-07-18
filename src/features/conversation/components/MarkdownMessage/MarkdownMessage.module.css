@@ -1,6 +1,6 @@
 .markdown {
-  font-size: 0.92rem;
-  line-height: 1.55;
+  font-size: var(--text-body);
+  line-height: var(--leading-relaxed);
   color: inherit;
   word-break: break-word;
 }
@@ -24,18 +24,19 @@
 }
 
 .markdown strong {
-  font-weight: 700;
+  font-weight: var(--weight-semibold);
 }
 
 .markdown a {
-  color: #2563eb;
+  color: var(--color-accent-strong);
   text-decoration: underline;
+  text-underline-offset: 2px;
 }
 
 .inlineCode {
   padding: 0.1rem 0.35rem;
   font-size: 0.85em;
   font-family: ui-monospace, "SFMono-Regular", "Menlo", monospace;
-  background: rgba(120, 90, 50, 0.12);
-  border-radius: 0.35rem;
+  background: var(--color-border-soft);
+  border-radius: var(--radius-sm);
 }

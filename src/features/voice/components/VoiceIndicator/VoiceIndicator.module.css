@@ -6,33 +6,35 @@
   display: inline-flex;
   align-items: center;
   gap: 0.45rem;
-  padding: 0.45rem 0.8rem;
-  font-size: 0.78rem;
-  background: rgba(255, 255, 255, 0.88);
-  border: 1px solid rgba(255, 255, 255, 0.9);
-  border-radius: 999px;
-  box-shadow: 0 10px 26px rgba(30, 41, 59, 0.22);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
+  padding: 0.45rem 0.85rem;
+  font-size: var(--text-caption);
+  letter-spacing: 0.02em;
+  color: var(--color-text-secondary);
+  background: var(--color-surface-strong);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  box-shadow: var(--shadow-2), inset 0 1px 0 var(--glass-highlight);
+  backdrop-filter: blur(var(--blur-glass));
+  -webkit-backdrop-filter: blur(var(--blur-glass));
 }
 
 .dot {
   width: 0.55rem;
   height: 0.55rem;
   border-radius: 50%;
-  background: #98a2b3;
+  background: var(--color-text-subtle);
 }
 
 .listening .dot {
-  background: #2f6b4f;
+  background: var(--color-success);
 }
 
 .thinking .dot {
-  background: #b7791f;
+  background: var(--color-warning);
 }
 
 .speaking .dot {
-  background: #3f5c7d;
+  background: var(--color-accent);
 }
 
 .bars {
@@ -45,14 +47,15 @@
 .bar {
   width: 3px;
   height: 100%;
-  border-radius: 999px;
-  background: #3f5c7d;
+  border-radius: var(--radius-full);
+  background: var(--color-accent);
   transform-origin: bottom;
 }
 
 .label {
-  color: #4a4038;
-  font-weight: 600;
+  color: var(--color-text-secondary);
+  font-weight: var(--weight-semibold);
+  text-transform: none;
 }
 
 @media (max-width: 640px) {
@@ -60,6 +63,5 @@
     top: 5.6rem;
     left: 0.6rem;
     padding: 0.35rem 0.65rem;
-    font-size: 0.72rem;
   }
 }

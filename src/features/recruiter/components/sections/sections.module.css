@@ -1,25 +1,26 @@
 .heading {
-  margin: 0 0 0.9rem;
-  font-size: 1.15rem;
-  font-weight: 800;
+  margin: 0 0 var(--space-4);
+  font-size: var(--text-heading);
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-tight);
 }
 
 .subheading {
-  margin: 1.1rem 0 0.5rem;
-  font-size: 0.95rem;
-  font-weight: 700;
+  margin: var(--space-5) 0 var(--space-2);
+  font-size: var(--text-section);
+  font-weight: var(--weight-semibold);
 }
 
 .status {
   margin: 0;
-  font-size: 0.88rem;
-  color: #6b5c4c;
+  font-size: var(--text-body);
+  color: var(--color-text-muted);
 }
 
 .grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 0.7rem;
+  gap: var(--space-3);
 }
 
 @media (max-width: 640px) {
@@ -30,28 +31,29 @@
 
 .card {
   padding: 0.85rem 0.95rem;
-  border-radius: 0.85rem;
-  border: 1px solid rgba(120, 90, 50, 0.16);
-  background: rgba(255, 255, 255, 0.7);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
 }
 
 .cardTitle {
   margin: 0;
   font-size: 0.95rem;
-  font-weight: 700;
+  font-weight: var(--weight-semibold);
+  color: var(--color-text-primary);
 }
 
 .cardMeta {
   margin: 0.15rem 0 0;
-  font-size: 0.76rem;
-  color: #8a7a68;
+  font-size: var(--text-caption);
+  color: var(--color-text-subtle);
 }
 
 .cardText {
   margin: 0.35rem 0 0;
-  font-size: 0.85rem;
-  line-height: 1.5;
-  color: #4a4038;
+  font-size: var(--text-body);
+  line-height: var(--leading-relaxed);
+  color: var(--color-text-secondary);
 }
 
 .tags {
@@ -64,10 +66,10 @@
 .tag {
   padding: 0.15rem 0.5rem;
   font-size: 0.7rem;
-  font-weight: 600;
-  color: #45392e;
-  background: rgba(120, 90, 50, 0.1);
-  border-radius: 999px;
+  font-weight: var(--weight-semibold);
+  color: var(--color-accent-strong);
+  background: var(--color-accent-soft);
+  border-radius: var(--radius-full);
 }
 
 /* summary */
@@ -86,27 +88,28 @@
 
 .fieldLabel {
   font-size: 0.7rem;
-  font-weight: 700;
-  letter-spacing: 0.04em;
+  font-weight: var(--weight-semibold);
+  letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: #8a7a68;
+  color: var(--color-text-subtle);
 }
 
 .fieldValue {
   font-size: 0.9rem;
-  font-weight: 600;
+  font-weight: var(--weight-semibold);
+  color: var(--color-text-primary);
 }
 
 .overviewName {
-  font-size: 1.05rem;
-  font-weight: 700;
+  font-size: var(--text-section);
+  font-weight: var(--weight-semibold);
 }
 
 .bio {
   margin: 0.6rem 0 0;
-  font-size: 0.9rem;
-  line-height: 1.55;
-  color: #4a4038;
+  font-size: var(--text-body);
+  line-height: var(--leading-relaxed);
+  color: var(--color-text-secondary);
 }
 
 /* timeline */
@@ -119,10 +122,15 @@
 .timelineItem {
   padding: 0.8rem 0.95rem;
   text-align: left;
-  border-radius: 0.85rem;
-  border: 1px solid rgba(120, 90, 50, 0.16);
-  background: rgba(255, 255, 255, 0.7);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
   cursor: pointer;
+  transition: border-color var(--duration-fast) var(--ease-standard);
+}
+
+.timelineItem:hover {
+  border-color: var(--color-accent);
 }
 
 .timelineHeader {
@@ -135,26 +143,28 @@
 .timelineRole {
   margin: 0;
   font-size: 0.92rem;
-  font-weight: 700;
+  font-weight: var(--weight-semibold);
+  color: var(--color-text-primary);
 }
 
 .timelineDuration {
-  font-size: 0.75rem;
-  color: #8a7a68;
+  font-size: var(--text-caption);
+  color: var(--color-text-subtle);
   white-space: nowrap;
 }
 
 .timelineCompany {
   margin: 0.1rem 0 0;
   font-size: 0.8rem;
-  color: #6b5c4c;
+  color: var(--color-accent);
+  font-weight: var(--weight-medium);
 }
 
 .timelineSummary {
   margin: 0.55rem 0 0;
-  font-size: 0.85rem;
-  line-height: 1.5;
-  color: #4a4038;
+  font-size: var(--text-body);
+  line-height: var(--leading-relaxed);
+  color: var(--color-text-secondary);
 }
 
 /* skills */
@@ -178,27 +188,28 @@
   gap: 0.5rem;
   padding: 0.45rem 0.6rem;
   font-size: 0.83rem;
-  border-radius: 0.6rem;
-  background: rgba(255, 255, 255, 0.6);
+  border-radius: var(--radius-sm);
+  background: var(--color-border-soft);
 }
 
 .skillName {
-  font-weight: 600;
+  font-weight: var(--weight-medium);
+  color: var(--color-text-primary);
 }
 
 .skillMeta {
   display: flex;
   gap: 0.4rem;
   font-size: 0.72rem;
-  color: #6b5c4c;
+  color: var(--color-text-muted);
 }
 
 .level {
   padding: 0.1rem 0.45rem;
-  border-radius: 999px;
-  background: rgba(79, 107, 140, 0.14);
-  color: #3f5c7d;
-  font-weight: 700;
+  border-radius: var(--radius-full);
+  background: var(--color-accent-soft);
+  color: var(--color-accent-strong);
+  font-weight: var(--weight-semibold);
 }
 
 /* filters */
@@ -212,17 +223,18 @@
 .filterChip {
   padding: 0.3rem 0.7rem;
   font-size: 0.78rem;
-  font-weight: 600;
-  color: #45392e;
-  background: rgba(120, 90, 50, 0.08);
+  font-weight: var(--weight-semibold);
+  color: var(--color-text-secondary);
+  background: var(--color-border-soft);
   border: 1px solid transparent;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   cursor: pointer;
+  transition: background var(--duration-fast) var(--ease-standard);
 }
 
 .filterChipActive {
-  color: #ffffff;
-  background: linear-gradient(180deg, #4f6b8c, #3f5c7d);
+  color: var(--color-accent-contrast);
+  background: linear-gradient(180deg, var(--color-accent-strong), var(--color-accent));
 }
 
 /* availability */
@@ -239,15 +251,15 @@
   gap: 0.45rem;
   padding: 0.55rem 0.7rem;
   font-size: 0.82rem;
-  font-weight: 700;
-  border-radius: 0.7rem;
-  background: rgba(120, 90, 50, 0.08);
-  color: #6b5c4c;
+  font-weight: var(--weight-semibold);
+  border-radius: var(--radius-md);
+  background: var(--color-border-soft);
+  color: var(--color-text-secondary);
 }
 
 .badgeOn {
-  color: #2f6b4f;
-  background: rgba(47, 107, 79, 0.12);
+  color: var(--color-success);
+  background: rgba(108, 195, 154, 0.14);
 }
 
 /* contact */
@@ -262,28 +274,29 @@
   align-items: center;
   gap: 0.55rem;
   padding: 0.7rem 0.9rem;
-  font-size: 0.88rem;
-  font-weight: 600;
-  color: #2a2420;
-  background: rgba(255, 255, 255, 0.7);
-  border: 1px solid rgba(120, 90, 50, 0.16);
-  border-radius: 0.75rem;
+  font-size: var(--text-body);
+  font-weight: var(--weight-medium);
+  color: var(--color-text-primary);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
   text-decoration: none;
   cursor: pointer;
+  transition: border-color var(--duration-fast) var(--ease-standard);
 }
 
 .contactLink:hover {
-  background: rgba(255, 255, 255, 0.95);
+  border-color: var(--color-accent);
 }
 
 .primaryAction {
   padding: 0.65rem 1rem;
-  font-size: 0.88rem;
-  font-weight: 700;
-  color: #ffffff;
-  background: linear-gradient(180deg, #4f6b8c, #3f5c7d);
+  font-size: var(--text-body);
+  font-weight: var(--weight-semibold);
+  color: var(--color-accent-contrast);
+  background: linear-gradient(180deg, var(--color-accent-strong), var(--color-accent));
   border: none;
-  border-radius: 0.75rem;
+  border-radius: var(--radius-md);
   cursor: pointer;
 }
 
@@ -298,14 +311,16 @@
 .quickAction {
   padding: 0.5rem 0.85rem;
   font-size: 0.8rem;
-  font-weight: 600;
-  color: #45392e;
-  background: rgba(120, 90, 50, 0.08);
+  font-weight: var(--weight-medium);
+  color: var(--color-text-secondary);
+  background: var(--color-border-soft);
   border: none;
-  border-radius: 999px;
+  border-radius: var(--radius-full);
   cursor: pointer;
+  transition: background var(--duration-fast) var(--ease-standard);
 }
 
 .quickAction:hover {
-  background: rgba(120, 90, 50, 0.16);
+  color: var(--color-text-primary);
+  background: var(--color-border);
 }
