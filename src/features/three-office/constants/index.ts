@@ -9,7 +9,14 @@ import {
 
 import { CAMERA_ZONES } from "./cameraZones";
 
-export { AVATAR_PLACEMENT, CAMERA_ZONES, OBJECT_CAMERA_ZONE } from "./cameraZones";
+export {
+  AVATAR_PLACEMENT,
+  CAMERA_ZONES,
+  OBJECT_CAMERA_ZONE,
+  conversationCamera,
+  focusAvatar,
+  greetingCamera,
+} from "./cameraZones";
 
 /**
  * 3D transforms for interactive registry objects, keyed by registry object id.

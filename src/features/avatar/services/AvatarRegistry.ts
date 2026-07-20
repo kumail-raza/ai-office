@@ -1,31 +1,73 @@
-import type { AvatarSource } from "../types";
+import { type AvatarSource, RigType } from "../types";
 
 /** All avatar models live under this public path. */
-const AVATAR_BASE_PATH = "/models/avatar";
+const AVATAR_BASE_PATH = "/assets/avatars";
 
 /**
- * The avatar the office renders. Point `url` at a .glb/.gltf (Ready Player Me,
- * Mixamo, custom, MetaHuman export) and flip `shipped` to true once the file is
- * in /public — nothing else changes. Shipped=false keeps the graceful
- * procedural fallback and skips the network request entirely (no 404 noise).
+ * Every avatar the office knows how to render. Drop the matching .glb into
+ * public/assets/avatars/ and flip `shipped` to true — nothing else changes.
+ * Shipped=false keeps the graceful procedural fallback and skips the network
+ * request entirely (no 404 noise). `clipOverrides` is the seam for models
+ * whose clip naming differs from the shared candidate table.
  */
-const PRIMARY_AVATAR: AvatarSource = {
-  id: "primary",
-  url: `${AVATAR_BASE_PATH}/kumail.glb`,
-  shipped: false,
+const AVATARS: Record<string, AvatarSource> = {
+  kumail: {
+    id: "kumail",
+    label: "Kumail (digital twin)",
+    url: `${AVATAR_BASE_PATH}/kumail.glb`,
+    shipped: false,
+    rig: RigType.ReadyPlayerMe,
+  },
+  "ready-player-me": {
+    id: "ready-player-me",
+    label: "Ready Player Me (generic)",
+    url: `${AVATAR_BASE_PATH}/ready-player-me.glb`,
+    shipped: false,
+    rig: RigType.ReadyPlayerMe,
+  },
+  "fallback-avatar": {
+    id: "fallback-avatar",
+    label: "Fallback humanoid",
+    url: `${AVATAR_BASE_PATH}/fallback-avatar.glb`,
+    shipped: false,
+    rig: RigType.GenericGltf,
+  },
 };
+
+const ACTIVE_ID = "kumail";
+const FALLBACK_ID = "fallback-avatar";
 
 /**
  * Central avatar registry — the only place that knows an avatar file path.
  * Components ask the registry (via the loader hook) by intent, never by URL.
  */
 export const AvatarRegistry = {
+  /** The avatar the office renders by default. */
   getActive(): AvatarSource {
-    return PRIMARY_AVATAR;
+    return AVATARS[ACTIVE_ID];
+  },
+
+  /** The model tried when the active one is missing or broken. */
+  getFallback(): AvatarSource {
+    return AVATARS[FALLBACK_ID];
+  },
+
+  /**
+   * Sources in the order the loader should attempt them: active first, then
+   * the fallback model; the procedural figure is the implicit last resort.
+   */
+  getLoadOrder(): AvatarSource[] {
+    const active = this.getActive();
+    const fallback = this.getFallback();
+    return active.id === fallback.id ? [active] : [active, fallback];
+  },
+
+  getAll(): AvatarSource[] {
+    return Object.values(AVATARS);
   },
 
   getById(id: string): AvatarSource | undefined {
-    return id === PRIMARY_AVATAR.id ? PRIMARY_AVATAR : undefined;
+    return AVATARS[id];
   },
 
   getUrl(id: string): string | undefined {

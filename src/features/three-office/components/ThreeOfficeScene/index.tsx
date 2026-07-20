@@ -3,10 +3,18 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Canvas } from "@react-three/fiber";
 
-import { AvatarState, useAvatar } from "@/features/digital-twin";
+import { AvatarGesture, AvatarState, useAvatar } from "@/features/digital-twin";
 import { useOfficeInteraction } from "@/features/office";
 
-import { CAMERA_CONFIG, DEFAULT_CAMERA_POSE, OBJECT_CAMERA_ZONE, OBJECT_TRANSFORMS } from "../../constants";
+import {
+  CAMERA_CONFIG,
+  DEFAULT_CAMERA_POSE,
+  OBJECT_CAMERA_ZONE,
+  OBJECT_TRANSFORMS,
+  conversationCamera,
+  focusAvatar,
+  greetingCamera,
+} from "../../constants";
 import { assetPreloader } from "../../loaders/AssetPreloader";
 import { type CameraView, CameraZone, type ThreeOfficeNode } from "../../types";
 import { CameraRig } from "../CameraRig";
@@ -22,15 +30,19 @@ import { SceneLighting } from "../SceneLighting";
  */
 export default function ThreeOfficeScene() {
   const { hoveredId, selectedObject, setHovered, selectObject, closePanel } = useOfficeInteraction();
-  const { currentState } = useAvatar();
+  const { currentState, currentGesture } = useAvatar();
   const [avatarClicked, setAvatarClicked] = useState(false);
 
-  // "Entering a conversation" = the runtime is in an active turn. The camera
-  // then focuses the avatar so the visitor watches it react (focusAvatar()).
+  // "Entering a conversation" = the runtime is in an active turn; the camera
+  // pulls to the conversation frame so the visitor watches the avatar react.
   const conversationActive =
     currentState === AvatarState.Listening ||
     currentState === AvatarState.Thinking ||
     currentState === AvatarState.Speaking;
+
+  // A wave/greeting beat gets its own closer, frontal framing.
+  const greetingActive =
+    currentGesture === AvatarGesture.Greeting || currentGesture === AvatarGesture.Wave;
 
   // Belt and braces: the loader flow preloads assets, but entering 3D directly
   // (e.g. after a hot reload) must also work. preloadAll() is idempotent.
@@ -66,11 +78,13 @@ export default function ThreeOfficeScene() {
     [hoveredId, selectedObject, setHovered, handleSelect],
   );
 
-  // Active conversation or an avatar click → AVATAR zone; else selected object
-  // → its camera zone when one is defined, else a generic focus on its
-  // position; nothing selected → the Entry overview.
+  // Avatar framings first — greeting beats conversation beats a plain click —
+  // then selected object → its camera zone when one is defined, else a generic
+  // focus on its position; nothing selected → the Entry overview.
   const view = useMemo<CameraView>(() => {
-    if (conversationActive || avatarClicked) return { kind: "zone", zone: CameraZone.Avatar };
+    if (greetingActive) return { kind: "pose", pose: greetingCamera() };
+    if (conversationActive) return { kind: "pose", pose: conversationCamera() };
+    if (avatarClicked) return { kind: "pose", pose: focusAvatar() };
     if (!selectedObject) return { kind: "zone", zone: CameraZone.Entry };
 
     const zone = OBJECT_CAMERA_ZONE[selectedObject.id];
@@ -78,7 +92,7 @@ export default function ThreeOfficeScene() {
 
     const position = OBJECT_TRANSFORMS[selectedObject.id]?.position;
     return position ? { kind: "focus", position } : { kind: "zone", zone: CameraZone.Entry };
-  }, [conversationActive, avatarClicked, selectedObject]);
+  }, [greetingActive, conversationActive, avatarClicked, selectedObject]);
 
   return (
     <Canvas

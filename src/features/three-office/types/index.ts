@@ -94,7 +94,8 @@ export enum CameraZone {
 /** What the scene camera is currently doing. */
 export type CameraView =
   | { kind: "zone"; zone: CameraZone }
-  | { kind: "focus"; position: ScenePosition };
+  | { kind: "focus"; position: ScenePosition }
+  | { kind: "pose"; pose: CameraPose };
 
 /** Compositional regions (zones) of the office environment. */
 export enum OfficeArea {

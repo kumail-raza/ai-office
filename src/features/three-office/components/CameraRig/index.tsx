@@ -42,6 +42,11 @@ export function CameraRig({ view }: CameraRigProps) {
       return;
     }
 
+    if (view.kind === "pose") {
+      controller.moveTo(view.pose.position, view.pose.target);
+      return;
+    }
+
     if (view.zone === CameraZone.Entry) {
       controller.reset();
       return;

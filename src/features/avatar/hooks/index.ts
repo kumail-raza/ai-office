@@ -1,1 +1,6 @@
-export { useAvatarModel, useActiveAvatarModel } from "./useAvatarModel";
+export {
+  useAvatarModel,
+  useActiveAvatarModel,
+  useAvatarChain,
+  type ResolvedAvatar,
+} from "./useAvatarModel";

@@ -1,4 +1,5 @@
-export { PresenceSystem } from "./PresenceSystem";
+export { PresenceSystem, type PresenceSystemOptions } from "./PresenceSystem";
+export { avatarStatus, type AvatarStatusSnapshot } from "./avatarStatus";
 export { EyeTargetController } from "./EyeTargetController";
 export { HeadTargetController } from "./HeadTargetController";
 export { PresenceAnimator } from "./PresenceAnimator";

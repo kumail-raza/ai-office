@@ -2,13 +2,22 @@
 
 import { memo } from "react";
 
-import { OfficeAvatar } from "@/features/avatar";
+import { type AvatarFocusTarget, FocusTargetName, OfficeAvatar } from "@/features/avatar";
 
-import { AVATAR_PLACEMENT } from "../../constants";
+import { AVATAR_PLACEMENT, OBJECT_TRANSFORMS } from "../../constants";
 import type { ZoneConfig } from "../../environment/zones";
 import { OfficeArea, type OfficeMeshTransform, type ThreeOfficeNode } from "../../types";
 import { OfficeModel } from "../../models/OfficeModel";
 import { InteractiveNode } from "../InteractiveNode";
+
+/**
+ * World positions the avatar's eyes can attend to. Room knowledge stays here —
+ * the avatar feature only ever sees named positions, never object ids.
+ */
+const AVATAR_FOCUS_TARGETS: AvatarFocusTarget[] = [
+  { name: FocusTargetName.Monitor, position: OBJECT_TRANSFORMS.monitor.position },
+  { name: FocusTargetName.Window, position: OBJECT_TRANSFORMS.window.position },
+];
 
 export interface AreaInteraction {
   hoveredId: string | null;
@@ -48,7 +57,13 @@ export interface OfficeZoneProps {
  */
 export function OfficeZone({ zone, nodes, interaction, onSelectAvatar }: OfficeZoneProps) {
   if (zone.id === OfficeArea.Avatar) {
-    return <OfficeAvatar placement={AVATAR_PLACEMENT} onSelect={onSelectAvatar} />;
+    return (
+      <OfficeAvatar
+        placement={AVATAR_PLACEMENT}
+        focusTargets={AVATAR_FOCUS_TARGETS}
+        onSelect={onSelectAvatar}
+      />
+    );
   }
 
   return (

@@ -1,5 +1,7 @@
 import { AvatarState } from "@/features/digital-twin";
 
+import { AnimationName } from "../types";
+
 /**
  * Procedural posture per avatar state. All angles are radians; amplitudes are
  * world units. Consumed only by the ProceduralAnimator (the fallback figure);
@@ -48,19 +50,36 @@ export const ANIMATION_CONFIG = {
 } as const;
 
 /**
- * Candidate clip names per state for GLB-driven avatars, tried in order. Covers
- * common Mixamo / Ready Player Me naming so a dropped-in rig animates with no
- * code changes; the first clip that exists wins, else the model holds its pose.
+ * Runtime state → the semantic animation the body should play. Many states
+ * share one animation deliberately — the difference between, say, Working and
+ * LookingAtScreen is carried by presence (lean, gaze, expression), not by a
+ * separate body clip. Walking has no state yet; it's the locomotion seam.
  */
-export const STATE_CLIP_CANDIDATES: Record<AvatarState, string[]> = {
-  [AvatarState.Idle]: ["Idle", "idle", "Breathing Idle", "Armature|Idle"],
-  [AvatarState.Working]: ["Typing", "Working", "Idle"],
-  [AvatarState.LookingAtScreen]: ["Idle", "Looking"],
-  [AvatarState.LookingAtVisitor]: ["Idle", "Standing"],
-  [AvatarState.Listening]: ["Listening", "Idle", "Standing Idle"],
-  [AvatarState.Thinking]: ["Thinking", "Idle"],
-  [AvatarState.Speaking]: ["Talking", "Speaking", "Idle"],
-  [AvatarState.Gesturing]: ["Waving", "Wave", "Gesture", "Idle"],
-  [AvatarState.Smiling]: ["Idle", "Happy"],
-  [AvatarState.Error]: ["Idle"],
+export const STATE_ANIMATION: Record<AvatarState, AnimationName> = {
+  [AvatarState.Idle]: AnimationName.Idle,
+  [AvatarState.Working]: AnimationName.Idle,
+  [AvatarState.LookingAtScreen]: AnimationName.Idle,
+  [AvatarState.LookingAtVisitor]: AnimationName.Idle,
+  [AvatarState.Listening]: AnimationName.Listening,
+  [AvatarState.Thinking]: AnimationName.Thinking,
+  [AvatarState.Speaking]: AnimationName.Speaking,
+  [AvatarState.Gesturing]: AnimationName.Greeting,
+  [AvatarState.Smiling]: AnimationName.Idle,
+  [AvatarState.Error]: AnimationName.Idle,
+};
+
+/**
+ * Candidate clip names per semantic animation, tried in order. Covers common
+ * Mixamo / Ready Player Me naming so a dropped-in rig animates with no code
+ * changes; the first clip that exists wins, else the model holds its pose.
+ * Idle tails give every animation a graceful floor on single-clip models.
+ * Per-avatar oddities go in the registry's clipOverrides, not here.
+ */
+export const ANIMATION_CLIP_CANDIDATES: Record<AnimationName, string[]> = {
+  [AnimationName.Idle]: ["Idle", "idle", "Breathing Idle", "Standing Idle", "Armature|Idle"],
+  [AnimationName.Greeting]: ["Waving", "Wave", "Greeting", "Gesture", "Idle"],
+  [AnimationName.Listening]: ["Listening", "Standing Idle", "Idle"],
+  [AnimationName.Thinking]: ["Thinking", "Idle"],
+  [AnimationName.Speaking]: ["Talking", "Speaking", "Idle"],
+  [AnimationName.Walking]: ["Walking", "Walk"],
 };

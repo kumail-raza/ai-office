@@ -20,6 +20,8 @@ export interface ProceduralFaceParts {
 interface Rest {
   browY: number;
   mouthY: number;
+  mouthScaleX: number;
+  mouthScaleY: number;
   pupilLX: number;
   pupilRX: number;
   pupilY: number;
@@ -41,6 +43,8 @@ export class ProceduralFaceRig implements FaceRig {
     this.rest = {
       browY: parts.browLeft.position.y,
       mouthY: parts.mouth.position.y,
+      mouthScaleX: parts.mouth.scale.x,
+      mouthScaleY: parts.mouth.scale.y,
       pupilLX: parts.pupilLeft.position.x,
       pupilRX: parts.pupilRight.position.x,
       pupilY: parts.pupilLeft.position.y,
@@ -69,8 +73,10 @@ export class ProceduralFaceRig implements FaceRig {
     this.parts.browRight.rotation.z = browFurrow * 0.4;
 
     // Mouth: smile widens + lifts, frown lowers, open scales vertically.
-    this.parts.mouth.scale.x = 1 + smile * 0.35;
-    this.parts.mouth.scale.y = 1 + mouthOpen * 1.6;
+    // Multiplied against the captured rest scale — an absolute assignment here
+    // would blow the authored mouth up to a unit-scale slab across the face.
+    this.parts.mouth.scale.x = this.rest.mouthScaleX * (1 + smile * 0.35);
+    this.parts.mouth.scale.y = this.rest.mouthScaleY * (1 + mouthOpen * 1.6);
     this.parts.mouth.position.y = this.rest.mouthY + smile * 0.015 - frown * 0.02;
 
     // Gaze: shift both pupils together.

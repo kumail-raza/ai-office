@@ -8,6 +8,7 @@ import { AvatarExpression } from "@/features/digital-twin";
 // dev panel stays free of three.js — it is rendered by the eagerly-loaded
 // ThreeOfficeLauncher, and must not pull the 3D stack into the initial bundle.
 import type { Gaze } from "../../face/FaceRig";
+import { avatarStatus } from "../../presence/avatarStatus";
 import { presenceDebug } from "../../presence/presenceDebug";
 
 import styles from "./AvatarPresenceDebugPanel.module.css";
@@ -35,12 +36,28 @@ function sameGaze(a: Gaze | null, b: Gaze): boolean {
  * blink. Renders nothing in production. State changes use the Digital Twin
  * debug panel (this drives the presence layer specifically).
  */
+const EMPTY_STATUS = {
+  state: "-",
+  animation: "-",
+  expression: "-",
+  focus: "-",
+  avatarType: "-",
+};
+
 export function AvatarPresenceDebugPanel() {
   // Re-render when overrides change so the active chips stay in sync.
   useSyncExternalStore(
     (cb) => presenceDebug.subscribe(cb),
     () => presenceDebug.expressionOverride,
     () => null,
+  );
+
+  // Live readout from the in-canvas systems; the channel only notifies on
+  // actual value changes, so this never re-renders at frame rate.
+  const status = useSyncExternalStore(
+    (cb) => avatarStatus.subscribe(cb),
+    () => avatarStatus.getSnapshot(),
+    () => EMPTY_STATUS,
   );
 
   if (!IS_DEV) return null;
@@ -53,6 +70,19 @@ export function AvatarPresenceDebugPanel() {
           Auto
         </button>
       </div>
+
+      <dl className={styles.readout}>
+        <dt className={styles.readoutKey}>State</dt>
+        <dd className={styles.readoutValue}>{status.state}</dd>
+        <dt className={styles.readoutKey}>Animation</dt>
+        <dd className={styles.readoutValue}>{status.animation}</dd>
+        <dt className={styles.readoutKey}>Expression</dt>
+        <dd className={styles.readoutValue}>{status.expression}</dd>
+        <dt className={styles.readoutKey}>Focus</dt>
+        <dd className={styles.readoutValue}>{status.focus}</dd>
+        <dt className={styles.readoutKey}>Avatar</dt>
+        <dd className={styles.readoutValue}>{status.avatarType}</dd>
+      </dl>
 
       <div className={styles.group}>
         <p className={styles.groupLabel}>Expression</p>

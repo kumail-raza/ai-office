@@ -29,6 +29,28 @@ export const CAMERA_ZONES: Record<CameraZone, CameraPose> = {
   [CameraZone.Avatar]: { position: [ax + 0.85, 1.6, az + 2.7], target: [ax, 1.2, az] },
 };
 
+/*
+ * Avatar framings beyond the base zone — all derived from AVATAR_PLACEMENT so
+ * they track the avatar if it moves. These are single poses today; when
+ * cinematic paths land, each becomes the terminal pose of a multi-waypoint
+ * move through the same CameraController.
+ */
+
+/** The neutral avatar framing (the Avatar zone pose). */
+export function focusAvatar(): CameraPose {
+  return CAMERA_ZONES[CameraZone.Avatar];
+}
+
+/** Close, frontal, eye-level — for the wave/greeting beat. */
+export function greetingCamera(): CameraPose {
+  return { position: [ax + 0.3, 1.62, az + 1.8], target: [ax, 1.52, az] };
+}
+
+/** A touch wider and lower than greeting — a comfortable conversation frame. */
+export function conversationCamera(): CameraPose {
+  return { position: [ax + 0.95, 1.62, az + 2.3], target: [ax, 1.32, az] };
+}
+
 /** Registry object id → the camera zone that best frames it. */
 export const OBJECT_CAMERA_ZONE: Record<string, CameraZone> = {
   monitor: CameraZone.Desk,
