@@ -3,14 +3,13 @@ import {
   CameraZone,
   LightingMode,
   type LightingPreset,
-  OfficeArea,
   OfficeMeshKind,
   type OfficeMeshTransform,
 } from "../types";
 
 import { CAMERA_ZONES } from "./cameraZones";
 
-export { AREA_OBJECT_IDS, AVATAR_PLACEMENT, CAMERA_ZONES, OBJECT_CAMERA_ZONE } from "./cameraZones";
+export { AVATAR_PLACEMENT, CAMERA_ZONES, OBJECT_CAMERA_ZONE } from "./cameraZones";
 
 /**
  * 3D transforms for interactive registry objects, keyed by registry object id.
@@ -18,55 +17,46 @@ export { AREA_OBJECT_IDS, AVATAR_PLACEMENT, CAMERA_ZONES, OBJECT_CAMERA_ZONE } f
  * behaviour; this map only positions each object in the 3D room.
  */
 export const OBJECT_TRANSFORMS: Record<string, OfficeMeshTransform> = {
-  monitor: { kind: OfficeMeshKind.Monitor, position: [0, 1.06, -0.55] },
-  certificate: { kind: OfficeMeshKind.Certificate, position: [-2.4, 2.1, -2.9] },
-  bookshelf: { kind: OfficeMeshKind.Bookshelf, position: [-3.3, 0, -1.2], rotationY: Math.PI / 2 },
-  coffee: { kind: OfficeMeshKind.Coffee, position: [0.75, 1.03, -0.35] },
+  monitor: { kind: OfficeMeshKind.Monitor, position: [0, 1.035, -0.58] },
+  certificate: { kind: OfficeMeshKind.Certificate, position: [-2.4, 1.98, -2.92] },
+  bookshelf: { kind: OfficeMeshKind.Bookshelf, position: [-3.28, 0, -1.2], rotationY: Math.PI / 2 },
+  coffee: { kind: OfficeMeshKind.Coffee, position: [0.78, 1.035, -0.3] },
   window: { kind: OfficeMeshKind.Window, position: [1.9, 1.7, -2.94] },
-};
-
-/** Non-interactive set dressing (not part of the registry), by area. */
-export const AREA_DECOR: Record<OfficeArea, OfficeMeshTransform[]> = {
-  [OfficeArea.Desk]: [
-    { kind: OfficeMeshKind.Desk, position: [0, 0, -0.5] },
-    { kind: OfficeMeshKind.Chair, position: [0, 0, 0.55], rotationY: Math.PI },
-  ],
-  [OfficeArea.Bookshelf]: [],
-  [OfficeArea.Window]: [],
-  [OfficeArea.Decoration]: [
-    { kind: OfficeMeshKind.Plant, position: [3.1, 0, -2.4] },
-    { kind: OfficeMeshKind.Plant, position: [-2.9, 0, -2.6] },
-  ],
-  [OfficeArea.Avatar]: [],
 };
 
 /** The resting overview pose is the Entry camera zone. */
 export const DEFAULT_CAMERA_POSE: CameraPose = CAMERA_ZONES[CameraZone.Entry];
 
 export const CAMERA_CONFIG = {
-  fov: 50,
+  fov: 42, // longer lens — less perspective distortion, more cinematic
   near: 0.1,
   far: 60,
   /** Approach distance when focusing an object. */
-  focusDistance: 1.7,
+  focusDistance: 1.9,
   /** Height offset applied to the focus eye position. */
-  focusLift: 0.35,
-  /** Per-frame smoothing factors (0–1; higher = snappier). */
-  positionSmoothing: 0.055,
-  targetSmoothing: 0.08,
-  /** Idle drift amplitude (world units) and speed (cycles/sec). */
-  idleAmplitude: 0.06,
-  idleSpeed: 0.1,
+  focusLift: 0.32,
+  /** Seconds for a full eased move between vantage points. */
+  transitionSeconds: 1.8,
+  /** Idle drift amplitude (world units) and speed (cycles/sec) — a slow breath. */
+  idleAmplitude: 0.045,
+  idleSpeed: 0.07,
 } as const;
 
+/**
+ * Late-afternoon light in a corner office: a warm low sun raking in through the
+ * window, a cool bounce filling the shadow side, and a soft ambient floor.
+ * Deliberately low-contrast — no blown highlights, no black shadows.
+ */
 const DAY: LightingPreset = {
   implemented: true,
-  background: "#dfe7f2",
-  fog: { color: "#dfe7f2", near: 8, far: 24 },
-  ambient: { intensity: 0.45, color: "#ffffff" },
-  hemisphere: { skyColor: "#eaf2ff", groundColor: "#cdbfa8", intensity: 0.6 },
-  directional: { position: [4, 6, 3], intensity: 1.6, color: "#fff4e0" },
-  environment: { intensity: 0.5 },
+  background: "#b9b0a2",
+  fog: { color: "#b9b0a2", near: 7, far: 24 },
+  ambient: { intensity: 0.38, color: "#fff3e2" },
+  hemisphere: { skyColor: "#e8f0fb", groundColor: "#7a5c40", intensity: 0.5 },
+  directional: { position: [5.5, 5.5, -2.5], intensity: 2.1, color: "#ffe8c4" },
+  fill: { position: [-5, 3, 4], intensity: 0.5, color: "#bcd0e8" },
+  environment: { intensity: 0.45 },
+  shadow: { radius: 6, opacity: 0.42, bias: -0.0006 },
 };
 
 /**
@@ -82,11 +72,9 @@ export const LIGHTING_PRESETS: Record<LightingMode, LightingPreset> = {
   [LightingMode.Cyberpunk]: { ...DAY, implemented: false },
 };
 
-/** Room shell dimensions (floor plane + back/side walls). */
+/** Room shell dimensions. Surfaces use MaterialKind presets, not colours. */
 export const ROOM = {
   width: 8,
   depth: 7,
   height: 3.2,
-  floorColor: "#c9b18f",
-  wallColor: "#efe6d6",
 } as const;

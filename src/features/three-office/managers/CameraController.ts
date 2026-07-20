@@ -3,8 +3,8 @@ import { Vector3, type PerspectiveCamera } from "three";
 import type { CameraPose, ScenePosition } from "../types";
 
 export interface CameraControllerOptions {
-  positionSmoothing: number;
-  targetSmoothing: number;
+  /** Seconds for a full eased move between vantage points. */
+  transitionSeconds: number;
   idleAmplitude: number;
   idleSpeed: number;
 }
@@ -16,19 +16,36 @@ export interface FocusOptions {
   lift?: number;
 }
 
+/** Cubic ease-in-out — accelerates away, decelerates in. No abrupt starts/stops. */
+function easeInOutCubic(t: number): number {
+  return t < 0.5 ? 4 * t * t * t : 1 - (-2 * t + 2) ** 3 / 2;
+}
+
+interface Transition {
+  fromPosition: Vector3;
+  fromTarget: Vector3;
+  toPosition: Vector3;
+  toTarget: Vector3;
+  elapsed: number;
+  duration: number;
+}
+
 /**
- * Generic smooth camera driver. Holds desired position/target and eases the
- * real camera toward them each frame, with a subtle idle drift while resting.
- * Deliberately knows nothing about the office — callers pass world positions,
- * so the same controller can later run cinematic paths or project showcases.
+ * Cinematic camera driver. Every move is a *timed, eased* dolly between two
+ * poses rather than an exponential chase, so transitions have a deliberate
+ * beginning, middle and end — they accelerate away, glide, and settle. A slow
+ * idle breath plays on top while at rest.
+ *
+ * Deliberately knows nothing about the office: callers pass world positions, so
+ * the same controller can later drive cinematic paths or project showcases.
  */
 export class CameraController {
-  private readonly desiredPosition = new Vector3();
-  private readonly desiredTarget = new Vector3();
+  private readonly basePosition = new Vector3();
   private readonly currentTarget = new Vector3();
   private readonly homePose: { position: Vector3; target: Vector3 };
 
   private readonly options: CameraControllerOptions;
+  private transition: Transition | null = null;
   private elapsedSec = 0;
   private idleEnabled = true;
   private initialized = false;
@@ -43,71 +60,87 @@ export class CameraController {
       target: new Vector3(...home.target),
     };
     this.options = options;
-    this.desiredPosition.copy(this.homePose.position);
-    this.desiredTarget.copy(this.homePose.target);
+    this.basePosition.copy(this.homePose.position);
     this.currentTarget.copy(this.homePose.target);
   }
 
-  /** Aim the camera at a world position without moving it. */
+  /** Aim the camera at a world position without moving the eye. */
   lookAt(target: ScenePosition): void {
-    this.desiredTarget.set(...target);
+    this.startTransition(this.basePosition, this.scratch.set(...target));
   }
 
   /** Glide the camera to a new eye position (optionally retargeting). */
   moveTo(position: ScenePosition, target?: ScenePosition): void {
-    this.desiredPosition.set(...position);
-    if (target) this.desiredTarget.set(...target);
+    const to = new Vector3(...position);
+    const look = target ? new Vector3(...target) : this.currentTarget.clone();
+    this.startTransition(to, look);
     this.idleEnabled = false;
   }
 
   /**
    * Frame a world position: aim at it and pull the eye to a pleasant offset
-   * between the current viewpoint and the subject.
+   * between the resting viewpoint and the subject.
    */
   focusObject(position: ScenePosition, { distance = 1.8, lift = 0.3 }: FocusOptions = {}): void {
-    const subject = this.scratch.set(...position);
+    const subject = new Vector3(...position);
     this.scratchDir.copy(this.homePose.position).sub(subject);
     this.scratchDir.y = 0;
     if (this.scratchDir.lengthSq() < 1e-6) this.scratchDir.set(0, 0, 1);
     this.scratchDir.normalize().multiplyScalar(distance);
 
-    this.desiredPosition.copy(subject).add(this.scratchDir);
-    this.desiredPosition.y = subject.y + lift;
-    this.desiredTarget.copy(subject);
+    const to = subject.clone().add(this.scratchDir);
+    to.y = subject.y + lift;
+    this.startTransition(to, subject);
     this.idleEnabled = false;
   }
 
-  /** Return to the resting overview pose and resume idle drift. */
+  /** Return to the resting overview pose and resume the idle breath. */
   reset(): void {
-    this.desiredPosition.copy(this.homePose.position);
-    this.desiredTarget.copy(this.homePose.target);
+    this.startTransition(this.homePose.position, this.homePose.target);
     this.idleEnabled = true;
   }
 
-  /** Ease the real camera toward the desired pose. Call once per frame. */
+  /** Advance the move and write the camera. Call once per frame. */
   update(deltaMs: number, camera: PerspectiveCamera): void {
-    this.elapsedSec += deltaMs / 1000;
+    const deltaSec = deltaMs / 1000;
+    this.elapsedSec += deltaSec;
 
     if (!this.initialized) {
-      camera.position.copy(this.desiredPosition);
-      this.currentTarget.copy(this.desiredTarget);
+      camera.position.copy(this.basePosition);
       this.initialized = true;
     }
 
-    // Normalize smoothing against a 60fps frame so easing is frame-rate stable.
-    const frames = deltaMs / (1000 / 60);
-    const posAlpha = 1 - (1 - this.options.positionSmoothing) ** frames;
-    const targetAlpha = 1 - (1 - this.options.targetSmoothing) ** frames;
+    if (this.transition) {
+      this.transition.elapsed += deltaSec;
+      const t = Math.min(1, this.transition.elapsed / this.transition.duration);
+      const eased = easeInOutCubic(t);
 
-    this.scratch.copy(this.desiredPosition);
+      this.basePosition.lerpVectors(this.transition.fromPosition, this.transition.toPosition, eased);
+      this.currentTarget.lerpVectors(this.transition.fromTarget, this.transition.toTarget, eased);
+
+      if (t >= 1) this.transition = null;
+    }
+
+    // A slow, shallow breath layered on top of the settled pose.
+    this.scratch.copy(this.basePosition);
     if (this.idleEnabled) {
       const t = this.elapsedSec * this.options.idleSpeed * Math.PI * 2;
       this.scratch.x += Math.sin(t) * this.options.idleAmplitude;
       this.scratch.y += Math.sin(t * 1.7) * this.options.idleAmplitude * 0.5;
     }
 
-    camera.position.lerp(this.scratch, posAlpha);
-    this.currentTarget.lerp(this.desiredTarget, targetAlpha);
+    camera.position.copy(this.scratch);
     camera.lookAt(this.currentTarget);
+  }
+
+  private startTransition(toPosition: Vector3, toTarget: Vector3): void {
+    this.transition = {
+      fromPosition: this.basePosition.clone(),
+      fromTarget: this.currentTarget.clone(),
+      toPosition: toPosition.clone(),
+      toTarget: toTarget.clone(),
+      elapsed: 0,
+      duration: this.options.transitionSeconds,
+    };
   }
 }

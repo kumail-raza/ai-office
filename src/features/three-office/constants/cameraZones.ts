@@ -1,4 +1,4 @@
-import { type CameraPose, CameraZone, OfficeArea, type ScenePosition } from "../types";
+import { type CameraPose, CameraZone, type ScenePosition } from "../types";
 
 /**
  * Where and how the avatar stands in the room — the single source of the
@@ -7,25 +7,26 @@ import { type CameraPose, CameraZone, OfficeArea, type ScenePosition } from "../
  * OfficeAvatar consumes this as a prop, so no coordinates live in components.
  */
 export const AVATAR_PLACEMENT = {
-  position: [0, 0, 1.15] as ScenePosition,
-  rotationY: 0,
+  /* Beside the desk rather than dead-centre, so it never blocks the room. */
+  position: [1.15, 0, 0.75] as ScenePosition,
+  rotationY: -0.22,
   scale: 1,
 };
 
 const [ax, , az] = AVATAR_PLACEMENT.position;
 
 /**
- * Predefined vantage points around the office. Entry doubles as the resting
- * overview pose; the rest frame their region for object focus and future
- * cinematic paths / project showcases. The Avatar zone frames the avatar
- * (derived from AVATAR_PLACEMENT so it tracks the avatar if it moves).
+ * Predefined vantage points around the office, framed for the 42° lens. Entry
+ * is an angled establishing shot that reads the whole room; the rest frame
+ * their region for object focus and future cinematic paths. The Avatar zone is
+ * derived from AVATAR_PLACEMENT so it tracks the avatar if it moves.
  */
 export const CAMERA_ZONES: Record<CameraZone, CameraPose> = {
-  [CameraZone.Entry]: { position: [0, 1.65, 3.4], target: [0, 1, -0.6] },
-  [CameraZone.Desk]: { position: [0.3, 1.5, 1.5], target: [0, 1.2, -0.55] },
-  [CameraZone.Bookshelf]: { position: [-1.6, 1.4, 0.6], target: [-3.3, 1.1, -1.2] },
-  [CameraZone.Window]: { position: [1.2, 1.6, -0.8], target: [1.9, 1.7, -2.94] },
-  [CameraZone.Avatar]: { position: [ax + 0.75, 1.5, az + 1.85], target: [ax, 1.35, az] },
+  [CameraZone.Entry]: { position: [1.35, 2.05, 5.5], target: [-0.35, 1.05, -1.1] },
+  [CameraZone.Desk]: { position: [0.55, 1.8, 2.35], target: [0, 1.12, -0.62] },
+  [CameraZone.Bookshelf]: { position: [-0.85, 1.75, 0.15], target: [-3.15, 1.2, -1.2] },
+  [CameraZone.Window]: { position: [1.6, 1.85, 0.5], target: [1.9, 1.62, -2.9] },
+  [CameraZone.Avatar]: { position: [ax + 0.85, 1.6, az + 2.7], target: [ax, 1.2, az] },
 };
 
 /** Registry object id → the camera zone that best frames it. */
@@ -37,11 +38,7 @@ export const OBJECT_CAMERA_ZONE: Record<string, CameraZone> = {
   // certificate has no dedicated zone — generic object focus frames it.
 };
 
-/** Registry object id → the environment area that renders it. */
-export const AREA_OBJECT_IDS: Record<OfficeArea, string[]> = {
-  [OfficeArea.Desk]: ["monitor", "coffee"],
-  [OfficeArea.Bookshelf]: ["bookshelf"],
-  [OfficeArea.Window]: ["window"],
-  [OfficeArea.Decoration]: ["certificate"],
-  [OfficeArea.Avatar]: [],
-};
+/*
+ * Object → zone assignment now lives with each zone's config in
+ * environment/zones.ts (ZoneConfig.objectIds), so a zone owns its contents.
+ */

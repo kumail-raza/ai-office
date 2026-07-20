@@ -3,9 +3,10 @@
 import { memo, useCallback } from "react";
 import type { ThreeEvent } from "@react-three/fiber";
 
+import { MaterialKind, material } from "../../materials";
 import type { ThreeOfficeNode } from "../../types";
 import { OfficeModel } from "../../models/OfficeModel";
-import { UNIT_CYLINDER, standardMaterial } from "../meshes/resources";
+import { UNIT_CYLINDER } from "../meshes/resources";
 
 export interface InteractiveNodeProps {
   node: ThreeOfficeNode;
@@ -15,11 +16,7 @@ export interface InteractiveNodeProps {
   onSelect: (node: ThreeOfficeNode) => void;
 }
 
-const highlight = standardMaterial("#f4b400", {
-  roughness: 0.4,
-  emissive: "#f4b400",
-  emissiveIntensity: 0.8,
-});
+const highlight = material(MaterialKind.Highlight);
 
 /**
  * An interactive registry object in the 3D room. Hover / click resolve through

@@ -6,6 +6,8 @@ export { useLightingMode } from "./hooks/useLighting";
 export { AssetRegistry } from "./assets";
 export { CAMERA_ZONES } from "./constants/cameraZones";
 export * from "./types";
-// NOTE: loaders (assetPreloader, gltfAssetLoader) are intentionally not
-// re-exported here — import them via "@/features/three-office/loaders" with a
-// dynamic import so three.js never lands in the initial bundle.
+// NOTE: modules that import three at module scope — loaders (assetPreloader,
+// gltfAssetLoader), the materials library, and the environment manager — are
+// deliberately NOT re-exported here. This barrel is reached eagerly via
+// ThreeOfficeLauncher, so anything added here risks pulling the 3D stack into
+// the initial bundle. Import those from their leaf paths inside the lazy scene.

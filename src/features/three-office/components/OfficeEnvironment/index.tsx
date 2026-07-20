@@ -4,52 +4,51 @@ import { useMemo } from "react";
 
 import { OfficeObjectRegistry } from "@/features/office";
 
-import { AREA_OBJECT_IDS, OBJECT_TRANSFORMS } from "../../constants";
-import { OfficeArea, type ThreeOfficeNode } from "../../types";
+import { OBJECT_TRANSFORMS } from "../../constants";
+import { officeEnvironmentManager } from "../../managers/OfficeEnvironmentManager";
+import type { ThreeOfficeNode } from "../../types";
 import { RoomShell } from "../RoomShell";
-import {
-  type AreaInteraction,
-  AvatarArea,
-  BookshelfArea,
-  DecorationArea,
-  DeskArea,
-  WindowArea,
-} from "./areas";
+import { type AreaInteraction, OfficeZone } from "./areas";
 
 export interface OfficeEnvironmentProps {
   interaction: AreaInteraction;
-  /** Fires when the avatar anchor is clicked, so the camera can frame it. */
+  /** Fires when the avatar is clicked, so the camera can frame it. */
   onSelectAvatar?: () => void;
 }
 
 /**
- * The composed office environment: room shell plus one component per region.
- * Interactive objects come from the OfficeObjectRegistry (single source of
- * truth) and are dealt to their areas by id — adding an object means one
- * registry entry, one transform, and one area-id line, no scene surgery.
+ * The composed office: the architectural shell plus every enabled zone, in the
+ * order the OfficeEnvironmentManager declares. Interactive objects come from the
+ * OfficeObjectRegistry (single source of truth) and are dealt to their zone by
+ * id — adding a prop means one zone-config line, no scene surgery.
  */
 export function OfficeEnvironment({ interaction, onSelectAvatar }: OfficeEnvironmentProps) {
-  const nodesByArea = useMemo(() => {
-    const nodes = OfficeObjectRegistry.getAll().flatMap<ThreeOfficeNode>((object) => {
-      const transform = OBJECT_TRANSFORMS[object.id];
-      return transform ? [{ object, transform }] : [];
-    });
+  const zones = officeEnvironmentManager.getZones();
 
-    const byArea = {} as Record<OfficeArea, ThreeOfficeNode[]>;
-    for (const area of Object.values(OfficeArea)) {
-      byArea[area] = nodes.filter((node) => AREA_OBJECT_IDS[area].includes(node.object.id));
+  const nodesById = useMemo(() => {
+    const map = new Map<string, ThreeOfficeNode>();
+    for (const object of OfficeObjectRegistry.getAll()) {
+      const transform = OBJECT_TRANSFORMS[object.id];
+      if (transform) map.set(object.id, { object, transform });
     }
-    return byArea;
+    return map;
   }, []);
 
   return (
     <group>
       <RoomShell />
-      <DeskArea nodes={nodesByArea[OfficeArea.Desk]} interaction={interaction} />
-      <BookshelfArea nodes={nodesByArea[OfficeArea.Bookshelf]} interaction={interaction} />
-      <WindowArea nodes={nodesByArea[OfficeArea.Window]} interaction={interaction} />
-      <DecorationArea nodes={nodesByArea[OfficeArea.Decoration]} interaction={interaction} />
-      <AvatarArea onSelect={onSelectAvatar} />
+      {zones.map((zone) => (
+        <OfficeZone
+          key={zone.id}
+          zone={zone}
+          nodes={zone.objectIds.flatMap((id) => {
+            const node = nodesById.get(id);
+            return node ? [node] : [];
+          })}
+          interaction={interaction}
+          onSelectAvatar={onSelectAvatar}
+        />
+      ))}
     </group>
   );
 }

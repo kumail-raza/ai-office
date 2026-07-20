@@ -4,7 +4,8 @@ import { memo } from "react";
 
 import { OfficeAvatar } from "@/features/avatar";
 
-import { AREA_DECOR, AVATAR_PLACEMENT } from "../../constants";
+import { AVATAR_PLACEMENT } from "../../constants";
+import type { ZoneConfig } from "../../environment/zones";
 import { OfficeArea, type OfficeMeshTransform, type ThreeOfficeNode } from "../../types";
 import { OfficeModel } from "../../models/OfficeModel";
 import { InteractiveNode } from "../InteractiveNode";
@@ -16,13 +17,8 @@ export interface AreaInteraction {
   onSelect: (node: ThreeOfficeNode) => void;
 }
 
-export interface AreaProps {
-  nodes: ThreeOfficeNode[];
-  interaction: AreaInteraction;
-}
-
-/** Static (non-interactive) set dressing for one area. */
-const Decor = memo(function Decor({ transforms }: { transforms: OfficeMeshTransform[] }) {
+/** Static (non-interactive) set dressing for one zone. */
+const ZoneDecor = memo(function ZoneDecor({ transforms }: { transforms: OfficeMeshTransform[] }) {
   return (
     <>
       {transforms.map((transform, index) => (
@@ -38,9 +34,26 @@ const Decor = memo(function Decor({ transforms }: { transforms: OfficeMeshTransf
   );
 });
 
-function AreaNodes({ nodes, interaction }: AreaProps) {
+export interface OfficeZoneProps {
+  zone: ZoneConfig;
+  nodes: ThreeOfficeNode[];
+  interaction: AreaInteraction;
+  onSelectAvatar?: () => void;
+}
+
+/**
+ * Renders one configured zone: its set dressing plus the interactive registry
+ * objects assigned to it. The Avatar zone is the one special case — its body is
+ * owned by the avatar feature.
+ */
+export function OfficeZone({ zone, nodes, interaction, onSelectAvatar }: OfficeZoneProps) {
+  if (zone.id === OfficeArea.Avatar) {
+    return <OfficeAvatar placement={AVATAR_PLACEMENT} onSelect={onSelectAvatar} />;
+  }
+
   return (
-    <>
+    <group>
+      <ZoneDecor transforms={zone.decor} />
       {nodes.map((node) => (
         <InteractiveNode
           key={node.object.id}
@@ -51,51 +64,6 @@ function AreaNodes({ nodes, interaction }: AreaProps) {
           onSelect={interaction.onSelect}
         />
       ))}
-    </>
-  );
-}
-
-/** Desk, chair, monitor, and coffee — the working heart of the room. */
-export function DeskArea(props: AreaProps) {
-  return (
-    <group>
-      <Decor transforms={AREA_DECOR[OfficeArea.Desk]} />
-      <AreaNodes {...props} />
     </group>
   );
-}
-
-/** The bookshelf along the left wall. */
-export function BookshelfArea(props: AreaProps) {
-  return (
-    <group>
-      <Decor transforms={AREA_DECOR[OfficeArea.Bookshelf]} />
-      <AreaNodes {...props} />
-    </group>
-  );
-}
-
-/** The window on the back wall. */
-export function WindowArea(props: AreaProps) {
-  return (
-    <group>
-      <Decor transforms={AREA_DECOR[OfficeArea.Window]} />
-      <AreaNodes {...props} />
-    </group>
-  );
-}
-
-/** Plants, the certificate, and other ambient dressing. */
-export function DecorationArea(props: AreaProps) {
-  return (
-    <group>
-      <Decor transforms={AREA_DECOR[OfficeArea.Decoration]} />
-      <AreaNodes {...props} />
-    </group>
-  );
-}
-
-/** The digital twin's 3D body, placed near the desk facing the visitor. */
-export function AvatarArea({ onSelect }: { onSelect?: () => void }) {
-  return <OfficeAvatar placement={AVATAR_PLACEMENT} onSelect={onSelect} />;
 }

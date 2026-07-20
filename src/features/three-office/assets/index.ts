@@ -12,6 +12,14 @@ const OFFICE_ASSETS: Record<OfficeAssetId, AssetDefinition> = {
   [OfficeAssetId.Plant]: { id: OfficeAssetId.Plant, url: `${ASSET_BASE_PATH}/plant.glb` },
   [OfficeAssetId.Certificate]: { id: OfficeAssetId.Certificate, url: `${ASSET_BASE_PATH}/certificate.glb` },
   [OfficeAssetId.Window]: { id: OfficeAssetId.Window, url: `${ASSET_BASE_PATH}/window.glb` },
+  [OfficeAssetId.Notebook]: { id: OfficeAssetId.Notebook, url: `${ASSET_BASE_PATH}/notebook.glb` },
+  [OfficeAssetId.PenCup]: { id: OfficeAssetId.PenCup, url: `${ASSET_BASE_PATH}/pen-cup.glb` },
+  [OfficeAssetId.DeskLamp]: { id: OfficeAssetId.DeskLamp, url: `${ASSET_BASE_PATH}/desk-lamp.glb` },
+  [OfficeAssetId.Rug]: { id: OfficeAssetId.Rug, url: `${ASSET_BASE_PATH}/rug.glb` },
+  [OfficeAssetId.Trophy]: { id: OfficeAssetId.Trophy, url: `${ASSET_BASE_PATH}/trophy.glb` },
+  [OfficeAssetId.FramedPhoto]: { id: OfficeAssetId.FramedPhoto, url: `${ASSET_BASE_PATH}/framed-photo.glb` },
+  [OfficeAssetId.AwardPlaque]: { id: OfficeAssetId.AwardPlaque, url: `${ASSET_BASE_PATH}/award-plaque.glb` },
+  [OfficeAssetId.Sideboard]: { id: OfficeAssetId.Sideboard, url: `${ASSET_BASE_PATH}/sideboard.glb` },
 };
 
 /**
@@ -30,7 +38,15 @@ export const ASSET_BY_MESH_KIND: Partial<Record<OfficeMeshKind, OfficeAssetId>> 
   [OfficeMeshKind.Plant]: OfficeAssetId.Plant,
   [OfficeMeshKind.Certificate]: OfficeAssetId.Certificate,
   [OfficeMeshKind.Window]: OfficeAssetId.Window,
-  // Coffee has no model planned yet — always the placeholder.
+  [OfficeMeshKind.Notebook]: OfficeAssetId.Notebook,
+  [OfficeMeshKind.PenCup]: OfficeAssetId.PenCup,
+  [OfficeMeshKind.DeskLamp]: OfficeAssetId.DeskLamp,
+  [OfficeMeshKind.Rug]: OfficeAssetId.Rug,
+  [OfficeMeshKind.Trophy]: OfficeAssetId.Trophy,
+  [OfficeMeshKind.FramedPhoto]: OfficeAssetId.FramedPhoto,
+  [OfficeMeshKind.AwardPlaque]: OfficeAssetId.AwardPlaque,
+  [OfficeMeshKind.Sideboard]: OfficeAssetId.Sideboard,
+  // Coffee and the window backdrop stay procedural — no model planned.
 };
 
 /**

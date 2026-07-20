@@ -27,9 +27,14 @@ export interface LightingPreset {
   fog: { color: string; near: number; far: number } | null;
   ambient: { intensity: number; color: string };
   hemisphere: { skyColor: string; groundColor: string; intensity: number };
+  /** Key light — the sun through the window. Casts the soft shadows. */
   directional: DirectionalLightPreset;
+  /** Bounce/fill from the opposite side; never casts shadows. */
+  fill: DirectionalLightPreset;
   /** Procedural environment-map contribution (null = none). */
   environment: { intensity: number } | null;
+  /** Soft-shadow tuning for the key light. */
+  shadow: { radius: number; opacity: number; bias: number };
 }
 
 /** Which placeholder mesh a scene node renders. */
@@ -42,6 +47,16 @@ export enum OfficeMeshKind {
   Bookshelf = "bookshelf",
   Window = "window",
   Coffee = "coffee",
+  /* Phase 15 set dressing — composition and storytelling props. */
+  Notebook = "notebook",
+  PenCup = "pen-cup",
+  DeskLamp = "desk-lamp",
+  Rug = "rug",
+  Trophy = "trophy",
+  FramedPhoto = "framed-photo",
+  AwardPlaque = "award-plaque",
+  Sideboard = "sideboard",
+  WindowBackdrop = "window-backdrop",
 }
 
 /**
@@ -81,13 +96,31 @@ export type CameraView =
   | { kind: "zone"; zone: CameraZone }
   | { kind: "focus"; position: ScenePosition };
 
-/** Compositional regions of the office environment. */
+/** Compositional regions (zones) of the office environment. */
 export enum OfficeArea {
+  Entrance = "entrance",
   Desk = "desk",
   Bookshelf = "bookshelf",
+  Awards = "awards",
   Window = "window",
   Decoration = "decoration",
   Avatar = "avatar",
+}
+
+/** What can be seen through the window. One is implemented; the rest are seams. */
+export enum BackdropMode {
+  Sky = "sky",
+  City = "city",
+  Landscape = "landscape",
+}
+
+/** Scene-wide atmosphere knobs owned by the OfficeEnvironmentManager. */
+export interface AtmosphereConfig {
+  backdrop: BackdropMode;
+  /** Warm practical lights (desk lamp, ceiling cove) on/off. */
+  practicals: boolean;
+  /** Ambient dust/haze depth cue strength (0–1). */
+  depthHaze: number;
 }
 
 /* ---- Asset pipeline ---- */
@@ -101,6 +134,14 @@ export enum OfficeAssetId {
   Plant = "plant",
   Certificate = "certificate",
   Window = "window",
+  Notebook = "notebook",
+  PenCup = "pen-cup",
+  DeskLamp = "desk-lamp",
+  Rug = "rug",
+  Trophy = "trophy",
+  FramedPhoto = "framed-photo",
+  AwardPlaque = "award-plaque",
+  Sideboard = "sideboard",
 }
 
 export interface AssetDefinition {

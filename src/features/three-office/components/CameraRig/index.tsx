@@ -24,8 +24,7 @@ export function CameraRig({ view }: CameraRigProps) {
   const controllerRef = useRef<CameraController | null>(null);
   if (controllerRef.current === null) {
     controllerRef.current = new CameraController(DEFAULT_CAMERA_POSE, {
-      positionSmoothing: CAMERA_CONFIG.positionSmoothing,
-      targetSmoothing: CAMERA_CONFIG.targetSmoothing,
+      transitionSeconds: CAMERA_CONFIG.transitionSeconds,
       idleAmplitude: CAMERA_CONFIG.idleAmplitude,
       idleSpeed: CAMERA_CONFIG.idleSpeed,
     });
