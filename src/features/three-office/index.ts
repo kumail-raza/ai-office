@@ -1,4 +1,13 @@
 export { ThreeOfficeLauncher } from "./components/ThreeOfficeLauncher";
+// Interaction bridge + zones are three.js-free (view-layer pub/sub), so they are
+// safe to re-export here alongside the eager launcher.
+export {
+  OfficeInteractionBridge,
+  interactionAnalytics,
+  interactionEvents,
+  InteractionZoneId,
+  BridgeTarget,
+} from "./interaction";
 export { CameraController } from "./managers/CameraController";
 export { lightingManager } from "./managers/LightingManager";
 export { useWebGLSupport } from "./hooks/useWebGLSupport";

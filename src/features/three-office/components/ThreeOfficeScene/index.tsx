@@ -1,12 +1,13 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Canvas } from "@react-three/fiber";
 
 import { AvatarGesture, AvatarState, useAvatar } from "@/features/digital-twin";
 import { useOfficeInteraction } from "@/features/office";
 
 import {
+  AVATAR_PLACEMENT,
   CAMERA_CONFIG,
   DEFAULT_CAMERA_POSE,
   OBJECT_CAMERA_ZONE,
@@ -15,11 +16,14 @@ import {
   focusAvatar,
   greetingCamera,
 } from "../../constants";
+import { InteractionManager } from "../../managers/InteractionManager";
+import type { InteractionZone } from "../../interaction/zones";
 import { assetPreloader } from "../../loaders/AssetPreloader";
-import { type CameraView, CameraZone, type ThreeOfficeNode } from "../../types";
+import { type CameraView, CameraZone, type ScenePosition, type ThreeOfficeNode } from "../../types";
 import { CameraRig } from "../CameraRig";
 import { OfficeEnvironment } from "../OfficeEnvironment";
 import { SceneLighting } from "../SceneLighting";
+import { ZoneFocusIndicator } from "../ZoneFocusIndicator";
 
 /**
  * The 3D office. Composes the environment (which reads the
@@ -32,6 +36,13 @@ export default function ThreeOfficeScene() {
   const { hoveredId, selectedObject, setHovered, selectObject, closePanel } = useOfficeInteraction();
   const { currentState, currentGesture } = useAvatar();
   const [avatarClicked, setAvatarClicked] = useState(false);
+
+  // Focus system: turns the current selection into the active interaction zone,
+  // firing zone/interaction events (→ analytics + the context bridge). The
+  // instance is created once and lives for the scene's lifetime.
+  const interactionRef = useRef<InteractionManager | null>(null);
+  if (interactionRef.current === null) interactionRef.current = new InteractionManager();
+  const [activeZone, setActiveZone] = useState<InteractionZone | null>(null);
 
   // "Entering a conversation" = the runtime is in an active turn; the camera
   // pulls to the conversation frame so the visitor watches the avatar react.
@@ -78,6 +89,23 @@ export default function ThreeOfficeScene() {
     [hoveredId, selectedObject, setHovered, handleSelect],
   );
 
+  // Feed the current selection to the focus system as a world-space probe
+  // point: the avatar's placement when it's focused, else the selected object's
+  // transform, else nothing. The manager resolves the active zone (firing
+  // enter/leave + analytics) and triggers its bridged experience once.
+  useEffect(() => {
+    const manager = interactionRef.current;
+    if (!manager) return;
+
+    let probe: ScenePosition | null = null;
+    if (avatarClicked) probe = AVATAR_PLACEMENT.position;
+    else if (selectedObject) probe = OBJECT_TRANSFORMS[selectedObject.id]?.position ?? null;
+
+    manager.setProbePoint(probe);
+    manager.triggerActive();
+    setActiveZone(manager.getActiveZone());
+  }, [avatarClicked, selectedObject]);
+
   // Avatar framings first — greeting beats conversation beats a plain click —
   // then selected object → its camera zone when one is defined, else a generic
   // focus on its position; nothing selected → the Entry overview.
@@ -112,6 +140,7 @@ export default function ThreeOfficeScene() {
       <SceneLighting />
       <CameraRig view={view} />
       <OfficeEnvironment interaction={interaction} onSelectAvatar={handleSelectAvatar} />
+      <ZoneFocusIndicator position={activeZone?.position ?? null} />
     </Canvas>
   );
 }
