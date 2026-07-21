@@ -13,9 +13,9 @@ const AVATAR_BASE_PATH = "/assets/avatars";
 const AVATARS: Record<string, AvatarSource> = {
   kumail: {
     id: "kumail",
-    label: "Kumail (digital twin)",
-    url: `${AVATAR_BASE_PATH}/kumail.glb`,
-    shipped: false,
+    label: "Kumail (Ready Player Me digital twin)",
+    url: `${AVATAR_BASE_PATH}/kumail-rpm.glb`,
+    shipped: true,
     rig: RigType.ReadyPlayerMe,
   },
   "ready-player-me": {

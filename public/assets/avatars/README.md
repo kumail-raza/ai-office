@@ -6,7 +6,7 @@ Drop avatar `.glb` files here to replace the procedural placeholder figure.
 
 | File | Registry id | Notes |
 | --- | --- | --- |
-| `kumail.glb` | `kumail` | The primary digital-twin avatar (Ready Player Me export recommended) |
+| `kumail-rpm.glb` | `kumail` | The default digital-twin avatar (Ready Player Me export). **Registered as `shipped: true`** — place this file here to activate it. |
 | `ready-player-me.glb` | `ready-player-me` | Generic RPM avatar |
 | `fallback-avatar.glb` | `fallback-avatar` | Tried when the active model is missing or broken |
 
