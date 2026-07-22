@@ -1,73 +1,60 @@
+import {
+  AVATAR_ASSETS,
+  type AvatarAsset,
+  AvatarAssetType,
+  AvatarId,
+  DEFAULT_AVATAR_ID,
+} from "../config/avatarAssets";
 import { type AvatarSource, RigType } from "../types";
 
-/** All avatar models live under this public path. */
-const AVATAR_BASE_PATH = "/assets/avatars";
-
 /**
- * Every avatar the office knows how to render. Drop the matching .glb into
- * public/assets/avatars/ and flip `shipped` to true — nothing else changes.
- * Shipped=false keeps the graceful procedural fallback and skips the network
- * request entirely (no 404 noise). `clipOverrides` is the seam for models
- * whose clip naming differs from the shared candidate table.
+ * Central avatar registry — the accessor over the avatar asset catalogue
+ * (`config/avatarAssets.ts`, the single data source). Components ask by intent,
+ * never by URL, and the loader chain resolves through `getLoadOrder()`.
+ *
+ * A GLB-backed asset is `shipped: true` so the loader attempts it; if the file
+ * isn't present yet it resolves to null and the procedural placeholder renders
+ * (graceful fallback). The procedural placeholder has no file and is never
+ * fetched.
  */
-const AVATARS: Record<string, AvatarSource> = {
-  kumail: {
-    id: "kumail",
-    label: "Kumail (Ready Player Me digital twin)",
-    url: `${AVATAR_BASE_PATH}/kumail-rpm.glb`,
-    shipped: true,
-    rig: RigType.ReadyPlayerMe,
-  },
-  "ready-player-me": {
-    id: "ready-player-me",
-    label: "Ready Player Me (generic)",
-    url: `${AVATAR_BASE_PATH}/ready-player-me.glb`,
-    shipped: false,
-    rig: RigType.ReadyPlayerMe,
-  },
-  "fallback-avatar": {
-    id: "fallback-avatar",
-    label: "Fallback humanoid",
-    url: `${AVATAR_BASE_PATH}/fallback-avatar.glb`,
-    shipped: false,
-    rig: RigType.GenericGltf,
-  },
-};
+function toSource(asset: AvatarAsset): AvatarSource {
+  const isRpm = asset.type === AvatarAssetType.Rpm && asset.glbPath !== null;
+  return {
+    id: asset.id,
+    label: asset.name,
+    url: asset.glbPath ?? "",
+    shipped: isRpm,
+    rig: isRpm ? RigType.ReadyPlayerMe : RigType.Procedural,
+  };
+}
 
-const ACTIVE_ID = "kumail";
-const FALLBACK_ID = "fallback-avatar";
-
-/**
- * Central avatar registry — the only place that knows an avatar file path.
- * Components ask the registry (via the loader hook) by intent, never by URL.
- */
 export const AvatarRegistry = {
-  /** The avatar the office renders by default. */
+  /** The avatar the office renders by default (currently Ready Player Me). */
   getActive(): AvatarSource {
-    return AVATARS[ACTIVE_ID];
+    return toSource(AVATAR_ASSETS[DEFAULT_AVATAR_ID]);
   },
 
-  /** The model tried when the active one is missing or broken. */
+  /** The procedural placeholder — the implicit last resort. */
   getFallback(): AvatarSource {
-    return AVATARS[FALLBACK_ID];
+    return toSource(AVATAR_ASSETS[AvatarId.Placeholder]);
   },
 
   /**
-   * Sources in the order the loader should attempt them: active first, then
-   * the fallback model; the procedural figure is the implicit last resort.
+   * Loadable sources in attempt order. Only GLB-backed (shipped) sources are
+   * fetched; the procedural placeholder is the loader's built-in last resort,
+   * not a network target — so it never appears here.
    */
   getLoadOrder(): AvatarSource[] {
-    const active = this.getActive();
-    const fallback = this.getFallback();
-    return active.id === fallback.id ? [active] : [active, fallback];
+    return [this.getActive()].filter((source) => source.shipped);
   },
 
   getAll(): AvatarSource[] {
-    return Object.values(AVATARS);
+    return Object.values(AVATAR_ASSETS).map(toSource);
   },
 
   getById(id: string): AvatarSource | undefined {
-    return AVATARS[id];
+    const asset = AVATAR_ASSETS[id as AvatarId];
+    return asset ? toSource(asset) : undefined;
   },
 
   getUrl(id: string): string | undefined {

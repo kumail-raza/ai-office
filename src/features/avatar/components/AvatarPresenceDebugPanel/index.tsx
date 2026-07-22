@@ -42,7 +42,13 @@ const EMPTY_STATUS = {
   expression: "-",
   focus: "-",
   avatarType: "-",
+  loaded: false,
+  skeletonFound: false,
+  morphTargetsFound: false,
+  animationClips: 0,
 };
+
+const yesNo = (value: boolean) => (value ? "yes" : "no");
 
 export function AvatarPresenceDebugPanel() {
   // Re-render when overrides change so the active chips stay in sync.
@@ -82,6 +88,14 @@ export function AvatarPresenceDebugPanel() {
         <dd className={styles.readoutValue}>{status.focus}</dd>
         <dt className={styles.readoutKey}>Avatar</dt>
         <dd className={styles.readoutValue}>{status.avatarType}</dd>
+        <dt className={styles.readoutKey}>Loaded</dt>
+        <dd className={styles.readoutValue}>{yesNo(status.loaded)}</dd>
+        <dt className={styles.readoutKey}>Skeleton</dt>
+        <dd className={styles.readoutValue}>{yesNo(status.skeletonFound)}</dd>
+        <dt className={styles.readoutKey}>Morphs</dt>
+        <dd className={styles.readoutValue}>{yesNo(status.morphTargetsFound)}</dd>
+        <dt className={styles.readoutKey}>Clips</dt>
+        <dd className={styles.readoutValue}>{status.animationClips}</dd>
       </dl>
 
       <div className={styles.group}>

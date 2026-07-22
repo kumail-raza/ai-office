@@ -5,8 +5,10 @@ import type { AnimationClip } from "three";
 
 import { ExpressionAdapter, RigAdapter } from "../../adapters";
 import type { FaceRig } from "../../face";
+import { avatarStatus } from "../../presence/avatarStatus";
 import type { AvatarRig, LoadedAvatar, RigMetadata } from "../../types";
 import { ProceduralAvatar, type ProceduralAvatarHandle } from "../ProceduralAvatar";
+import { RpmAvatar } from "../RpmAvatar";
 
 export interface AvatarModelProps {
   /** Parsed GLB/GLTF, or null to render the procedural fallback. */
@@ -21,29 +23,28 @@ export interface AvatarModelProps {
 }
 
 /**
- * Renders the avatar body — the real .glb model when one loaded, else the
- * procedural fallback — and reports its rig + face rig + metadata upward so
- * the presence system can drive them. All vendor knowledge lives in the
- * adapters: the RigAdapter normalizes the skeleton, the ExpressionAdapter
- * picks the face implementation. A missing model is not an error; the
- * fallback renders, and a GLB with no blend shapes still animates via
- * body/head motion.
+ * The avatar's render router — the single decision between a loaded model and
+ * the procedural placeholder, inside the office's one mount point. A real .glb
+ * renders through <RpmAvatar/> (skeleton-safe clone, shadows, animations); a
+ * missing/broken model falls back to the procedural figure. Either way, vendor
+ * knowledge stays in the adapters and the rig is reported upward unchanged — so
+ * the presence system, AvatarManager, and adapters are untouched by the swap.
  */
 export function AvatarModel({ loaded, onRigReady }: AvatarModelProps) {
   const proceduralRef = useRef<ProceduralAvatarHandle>(null);
 
   useEffect(() => {
-    if (!loaded) return;
-    const { rig, metadata } = RigAdapter.adapt(loaded);
-    onRigReady(rig, ExpressionAdapter.forModel(loaded.scene), loaded.animations, metadata);
-  }, [loaded, onRigReady]);
-
-  useEffect(() => {
     if (loaded || !proceduralRef.current) return;
     const { rig, faceParts } = proceduralRef.current;
     onRigReady(rig, ExpressionAdapter.forProcedural(faceParts), [], RigAdapter.proceduralMetadata());
+    avatarStatus.reportModel({
+      loaded: false,
+      skeletonFound: false,
+      morphTargetsFound: false,
+      animationClips: 0,
+    });
   }, [loaded, onRigReady]);
 
-  if (loaded) return <primitive object={loaded.scene} />;
+  if (loaded) return <RpmAvatar loaded={loaded} onRigReady={onRigReady} />;
   return <ProceduralAvatar ref={proceduralRef} />;
 }
