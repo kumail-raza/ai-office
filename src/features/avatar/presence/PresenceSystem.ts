@@ -4,6 +4,7 @@ import { EyeTargetAdapter, HeadTrackingAdapter } from "../adapters";
 import { ExpressionManager } from "../expression";
 import { FaceShape, type FaceRig, type FaceWeights, type Gaze } from "../face";
 import { AnimationController } from "../managers/AnimationController";
+import { PresenceController } from "../runtime/PresenceController";
 import type { AvatarFrame, AvatarRig, AvatarSource, RigMetadata } from "../types";
 import { EyeTargetController } from "./EyeTargetController";
 import { PresenceAnimator } from "./PresenceAnimator";
@@ -37,6 +38,7 @@ export class PresenceSystem {
   private readonly eyeTargets = new EyeTargetAdapter();
   private readonly head = new HeadTrackingAdapter();
   private readonly presence = new PresenceAnimator();
+  private readonly presenceController = new PresenceController();
   private readonly animation: AnimationController;
   private readonly metadata: RigMetadata | null;
 
@@ -68,16 +70,30 @@ export class PresenceSystem {
     }
     this.expression.update(frame.deltaSec);
 
-    // Gaze base: debug > explicit focus target > runtime look direction.
+    // Living presence: pick the behaviour profile, drive where it looks, and
+    // schedule random idle events. Returns this frame's additive modifiers.
+    const mods = this.presenceController.update(frame.state, frame.deltaSec);
+    const focusIntent = this.presenceController.getFocusIntent();
+    if (focusIntent) this.eyeTargets.look(focusIntent);
+    else this.eyeTargets.release();
+
+    // Gaze base: debug > profile focus / runtime look direction, plus the
+    // transient idle-glance offset (never applied under a debug override).
     const runtimeGaze: Gaze = { x: frame.head.x, y: frame.head.y };
+    const ambientGaze = this.eyeTargets.getActiveDirection() ?? runtimeGaze;
     const baseGaze =
-      presenceDebug.gazeOverride ?? this.eyeTargets.getActiveDirection() ?? runtimeGaze;
+      presenceDebug.gazeOverride ??
+      ({ x: ambientGaze.x + mods.gazeOffset.x, y: ambientGaze.y + mods.gazeOffset.y } as Gaze);
     const baseHead = presenceDebug.headOverride ?? baseGaze;
 
     // Body: clips play themselves; the procedural body gets lean/arm + presence.
     const clipDriven = this.animation.isClipDriven();
     this.animation.update(this.rig, frame);
-    if (!clipDriven) this.presence.update(this.rig.root, presence, frame);
+    if (!clipDriven) {
+      this.presence.update(this.rig.root, presence, frame);
+      // Layer the idle weight-shift on top of the continuous presence sway.
+      this.rig.root.position.x += mods.swayOffset;
+    }
 
     // Head (dropped-to-additive when clips already pose it).
     if (this.rig.head) {
@@ -86,16 +102,20 @@ export class PresenceSystem {
 
     // Eyes → gaze + blink, merged with the expression weights for one write.
     const { gaze, blink } = this.eyes.update(baseGaze, presence, frame.deltaSec);
+    this.presenceController.countBlink(blink);
     const weights: FaceWeights = { ...this.expression.getWeights(), [FaceShape.Blink]: blink };
     this.faceRig.apply(weights, gaze);
 
-    // Dev readout — cheap string snapshot; the channel dedupes notifications.
+    // Dev readout — cheap snapshot; the channel dedupes notifications.
     avatarStatus.report({
       state: frame.state,
       animation: this.animation.getCurrentAnimation(),
       expression: activeExpression,
       focus: this.eyeTargets.getActiveName() ?? "ambient",
       avatarType: this.metadata?.type ?? "procedural",
+      profile: this.presenceController.getActiveProfile(),
+      behavior: this.presenceController.getActiveBehavior(),
+      blinkCount: this.presenceController.getBlinkCount(),
     });
   }
 

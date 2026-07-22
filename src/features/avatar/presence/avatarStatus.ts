@@ -18,6 +18,12 @@ export interface AvatarStatusSnapshot {
   focus: string;
   /** Rig type of the model being driven (e.g. "procedural", "ready-player-me"). */
   avatarType: string;
+  /** Active presence behaviour profile (idle / listening / thinking / speaking). */
+  profile: string;
+  /** Active idle behaviour (steady / glance / weight-shift). */
+  behavior: string;
+  /** Running count of blinks this session. */
+  blinkCount: number;
   /* ── model (per-mount) ── */
   /** Whether a real .glb loaded (false = procedural placeholder). */
   loaded: boolean;
@@ -32,7 +38,7 @@ export interface AvatarStatusSnapshot {
 /** The runtime subset the PresenceSystem reports each frame. */
 export type AvatarRuntimeStatus = Pick<
   AvatarStatusSnapshot,
-  "state" | "animation" | "expression" | "focus" | "avatarType"
+  "state" | "animation" | "expression" | "focus" | "avatarType" | "profile" | "behavior" | "blinkCount"
 >;
 
 /** The static subset the render layer reports once per mounted model. */
@@ -47,6 +53,9 @@ const INITIAL: AvatarStatusSnapshot = {
   expression: "neutral",
   focus: "ambient",
   avatarType: "procedural",
+  profile: "idle",
+  behavior: "steady",
+  blinkCount: 0,
   loaded: false,
   skeletonFound: false,
   morphTargetsFound: false,
@@ -69,7 +78,10 @@ class AvatarStatusChannel {
       next.animation === c.animation &&
       next.expression === c.expression &&
       next.focus === c.focus &&
-      next.avatarType === c.avatarType
+      next.avatarType === c.avatarType &&
+      next.profile === c.profile &&
+      next.behavior === c.behavior &&
+      next.blinkCount === c.blinkCount
     ) {
       return;
     }

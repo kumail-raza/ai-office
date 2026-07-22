@@ -6,6 +6,12 @@ export { presenceDebug, avatarStatus, VisitorFocus, type FocusTarget } from "./p
 export { RigAdapter, ExpressionAdapter, EyeTargetAdapter, HeadTrackingAdapter, FocusTargetName, type AdaptedRig } from "./adapters";
 export { AnimationController } from "./managers";
 export {
+  PresenceController,
+  BehaviorProfile,
+  IdleBehavior,
+  type PresenceModifiers,
+} from "./runtime/PresenceController";
+export {
   AvatarId,
   AvatarAssetType,
   AVATAR_ASSETS,

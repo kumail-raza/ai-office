@@ -42,6 +42,9 @@ const EMPTY_STATUS = {
   expression: "-",
   focus: "-",
   avatarType: "-",
+  profile: "-",
+  behavior: "-",
+  blinkCount: 0,
   loaded: false,
   skeletonFound: false,
   morphTargetsFound: false,
@@ -80,8 +83,14 @@ export function AvatarPresenceDebugPanel() {
       <dl className={styles.readout}>
         <dt className={styles.readoutKey}>State</dt>
         <dd className={styles.readoutValue}>{status.state}</dd>
+        <dt className={styles.readoutKey}>Profile</dt>
+        <dd className={styles.readoutValue}>{status.profile}</dd>
+        <dt className={styles.readoutKey}>Behavior</dt>
+        <dd className={styles.readoutValue}>{status.behavior}</dd>
         <dt className={styles.readoutKey}>Animation</dt>
         <dd className={styles.readoutValue}>{status.animation}</dd>
+        <dt className={styles.readoutKey}>Blinks</dt>
+        <dd className={styles.readoutValue}>{status.blinkCount}</dd>
         <dt className={styles.readoutKey}>Expression</dt>
         <dd className={styles.readoutValue}>{status.expression}</dd>
         <dt className={styles.readoutKey}>Focus</dt>
